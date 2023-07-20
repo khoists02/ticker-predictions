@@ -1,5 +1,4 @@
 .DS_Store
-.env
 .flaskenv
 *.pyc
 *.pyo
@@ -23,3 +22,5 @@ htmlcov/
 .coverage
 .coverage.*
 *,cover
+.env.*
+.env
