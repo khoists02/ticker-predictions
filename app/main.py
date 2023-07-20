@@ -1,13 +1,13 @@
 from flask import Flask, jsonify
 from flask_restful import Api, abort
-from resources.api.main import Main
+from resources.api.main import Predict
 from webargs.flaskparser import parser
 
 
 app = Flask(__name__)
 api = Api(app)
 
-api.add_resource(Main, '/api/v1/main')
+api.add_resource(Predict, '/api/v1/predict')
 
 
 @parser.error_handler
