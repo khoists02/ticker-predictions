@@ -1,10 +1,6 @@
 import numpy as np
 import pandas as pd
-import json
-import random
 import tensorflow as tf
-from tensorflow.python.keras.layers import LSTM, Dense, Dropout
-from tensorflow.python.keras.callbacks import ModelCheckpoint, TensorBoard
 import matplotlib.pyplot as plt
 
 
@@ -12,7 +8,7 @@ class PredictService:
     def __init__(self):
         pass
 
-    def create_model(self, sequence_length, n_features, units=256, cell=LSTM, n_layers=2, dropout=0.3,
+    def create_model(self, sequence_length, n_features, units=256, cell=tf.keras.layers.LSTM, n_layers=2, dropout=0.3,
                      loss="mean_absolute_error", optimizer="rmsprop", bidirectional=False):
         model = tf.keras.models.Sequential()
 
@@ -40,8 +36,8 @@ class PredictService:
                 else:
                     model.add(cell(units, return_sequences=True))
             # add dropout after each layer
-            model.add(Dropout(dropout))
-        model.add(Dense(1, activation="linear"))
+            model.add(tf.keras.layers.Dropout(dropout))
+        model.add(tf.keras.layers.Dense(1, activation="linear"))
         model.compile(loss=loss, metrics=[
                       "mean_absolute_error"], optimizer=optimizer)
         return model

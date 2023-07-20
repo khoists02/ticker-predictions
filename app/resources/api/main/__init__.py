@@ -1,12 +1,8 @@
 from flask_restful import Resource, abort
-from flask import jsonify, request
 import numpy as np
-import pandas as pd
 import json
 import random
 import tensorflow as tf
-from tensorflow.python.keras.layers import LSTM, Dense, Dropout
-from tensorflow.python.keras.callbacks import ModelCheckpoint, TensorBoard
 import time
 from resources.helpers import Helpers
 from webargs import fields, validate
@@ -31,7 +27,7 @@ class Predict(Resource):
         # model parameters
         self.N_LAYERS = 2
         # LSTM cell
-        self.CELL = LSTM
+        self.CELL = tf.keras.layers.LSTM
         # 40% dropout
         self.DROPOUT = 0.4
         # whether to use bidirectional RNNs
