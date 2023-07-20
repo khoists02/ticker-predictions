@@ -18,7 +18,6 @@ class Helpers:
 
     def load_stock_data(self, ticker, n_steps=50, scale=True, shuffle=True, lookup_step=1, split_by_date=True,
                 test_size=0.2, feature_columns=['adjclose', 'volume', 'open', 'high', 'low']):
-        print(str(ticker))
         if isinstance(ticker, str):
             # load it from yahoo_fin library
             df = si.get_data(ticker)
