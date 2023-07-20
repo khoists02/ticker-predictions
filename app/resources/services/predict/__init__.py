@@ -5,6 +5,7 @@ import random
 import tensorflow as tf
 from tensorflow.python.keras.layers import LSTM, Dense, Dropout
 from tensorflow.python.keras.callbacks import ModelCheckpoint, TensorBoard
+import matplotlib.pyplot as plt
 
 
 class PredictService:
@@ -111,3 +112,15 @@ class PredictService:
         hist_df = pd.DataFrame(history.history)
         with open(file_name, mode='w') as f:
             hist_df.to_json(f)
+
+    def plot_graph(self, test_df, lookup_step):
+        """
+        This function plots true close price along with predicted close price
+        with blue and red colors respectively
+        """
+        plt.plot(test_df[f'true_adjclose_{lookup_step}'], c='b')
+        plt.plot(test_df[f'adjclose_{lookup_step}'], c='r')
+        plt.xlabel("Days")
+        plt.ylabel("Price")
+        plt.legend(["Actual Price", "Predicted Price"])
+        plt.show()

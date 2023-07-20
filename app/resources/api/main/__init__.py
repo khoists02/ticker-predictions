@@ -11,7 +11,7 @@ import time
 from resources.helpers import Helpers
 from webargs import fields, validate
 from webargs.flaskparser import use_kwargs
-from services.predict import PredictService
+from resources.services.predict import PredictService
 
 
 class Predict(Resource):
@@ -192,11 +192,14 @@ class Predict(Resource):
             'total_buy_profit': str(total_buy_profit),
             'total_sell_profit': str(total_sell_profit),
             'total_profit': str(total_profit),
-            'profit_per_trade': str(profit_per_trade),
+            'profit_per_trade': str(profit_per_trade)
         }
         return response, 201
 
-class PredictionHistory(Resource):
-    def get(self, id):
-        df = pd.read_json('history.json')
-        return df
+# class PredictionHistory(Resource):
+#     def __init__(self):
+#         self.service = PredictService()
+
+#     def get(self, id): ## show plot
+#         self.service.plot_graph()
+#         return df
