@@ -17,7 +17,7 @@ class PredictionsHistory(db.Model):
     user_id = Column(UUID, nullable=False)
 
     def __repr__(self):
-        return '<PredictionsHistory %r>' % self.filter_id
+        return '<PredictionsHistory %r>' % self.serialize
 
     @property
     def serialize(self):
@@ -53,6 +53,11 @@ class PredictionsHistoryQuery:
             PredictionsHistory.filter_id == filter_id
         ).first()
         return exist != None
+
+    def getOneByFilterId(self, filter_id: str) -> PredictionsHistory:
+        return db.session.query(PredictionsHistory).filter(
+            PredictionsHistory.filter_id == filter_id
+        ).first()
 
     def save(self, model):
         db.session.add(model)

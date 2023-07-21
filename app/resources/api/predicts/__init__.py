@@ -45,24 +45,21 @@ class Predict(Resource):
         # huber loss
         self.LOSS = "huber_loss"
         self.OPTIMIZER = "adam"
-
+    get_args = {
+        'id': fields.Str(
+            required=True
+        )
+    }
     post_args = {
         'filter_id': fields.Str(
             required=True
         )
     }
 
-    def get(self):
-        result = []
-        f = open("history.json")
-        data = json.load(f)
-        # print(data.items())
-        for k, v in data.items():
-            print(v.items())
-            result.append({'key': k, 'value': v})
-        f.close()
-        # print(json.dumps(result))
-        return data, 200
+    @use_kwargs(get_args, location='query')
+    def get(self, id: str):
+        data = self.history_service.findOneById(id)
+        return data.serialize, 200
 
     @use_kwargs(post_args)
     def post(self, filter_id: str):
@@ -74,7 +71,8 @@ class Predict(Resource):
         feature_cols = []
         if len(requestFilter.cols):
             feature_cols = requestFilter.cols.split(',')
-        # print(ticker, steps, scale, split_by_date, feature_cols)
+
+        # Loads data
         data = self.helper.load_stock_data(
             ticker=requestFilter.serialize['ticker'],
             n_steps=requestFilter.steps,
@@ -85,6 +83,8 @@ class Predict(Resource):
             test_size=requestFilter.test_size,
             feature_columns=feature_cols
         )
+
+        # Create Model
         model = self.service.create_model(
             sequence_length=requestFilter.steps,
             n_features=len(feature_cols),
@@ -96,6 +96,8 @@ class Predict(Resource):
             optimizer=self.OPTIMIZER,
             bidirectional=self.BIDIRECTIONAL
         )
+
+        # fit history
         history = model.fit(
             data["X_train"],
             data["y_train"],
@@ -104,8 +106,6 @@ class Predict(Resource):
             validation_data=(data["X_test"], data["y_test"]),
             verbose=1
         )
-        # save to json:
-        # self.save_files(hist_json_file, history)
 
         # Predict Model ,Data
         future_price = self.service.predict(
@@ -142,7 +142,8 @@ class Predict(Resource):
             'total_buy_profit': str(total_buy_profit),
             'total_sell_profit': str(total_sell_profit),
             'total_profit': str(total_profit),
-            'profit_per_trade': str(profit_per_trade)
+            'profit_per_trade': str(profit_per_trade),
+            'mean_absolute_error': str(mean_absolute_error)
         }
         # store
         model = PredictionsHistory()
