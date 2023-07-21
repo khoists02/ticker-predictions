@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from flask_restful import Api, abort
-from resources.api.main import Predict, StockData
+from resources.api.predicts import Predict, StockData
 from resources.api.prediction_history import PredictionsHistory
 from webargs.flaskparser import parser
 from resources.database import db
