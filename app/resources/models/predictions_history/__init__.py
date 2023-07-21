@@ -1,9 +1,11 @@
-from sqlalchemy import Column, UUID, String, Table
+from sqlalchemy import Column, UUID, String
 from resources.database import db
+import sqlalchemy
 
 
 class PredictionsHistory(db.Model):
-    id = Column(UUID, primary_key=True)
+    id = Column(UUID, primary_key=True,
+                server_default=sqlalchemy.text("uuid_generate_v4()"),)
     loss = Column(String, nullable=True)
     future_price = Column(String, nullable=True)
     accuracy_score = Column(String, nullable=True)
@@ -45,3 +47,13 @@ class PredictionsHistoryQuery:
     def findAll(self):
         result = db.session.query(PredictionsHistory)
         return result
+
+    def checkExistFilter(self, filter_id: str) -> bool:
+        exist = db.session.query(PredictionsHistory).filter(
+            PredictionsHistory.filter_id == filter_id
+        ).first()
+        return exist != None
+
+    def save(self, model):
+        db.session.add(model)
+        db.session.commit()

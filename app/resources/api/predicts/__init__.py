@@ -1,5 +1,5 @@
-from flask_restful import Resource, abort
-from flask import jsonify
+from flask_restful import Resource
+from flask import abort
 import numpy as np
 import json
 import random
@@ -11,6 +11,7 @@ from webargs.flaskparser import use_kwargs
 from resources.services.predict import PredictService
 from resources.services.filters import FilterService
 from resources.models.filters import Filters
+from resources.models.predictions_history import PredictionsHistory, PredictionsHistoryQuery
 
 
 class Predict(Resource):
@@ -18,6 +19,7 @@ class Predict(Resource):
         self.helper = Helpers()
         self.service = PredictService()
         self.filter_service = FilterService()
+        self.history_service = PredictionsHistoryQuery()
         # set seed, so we can get the same results after rerunning several times
         np.random.seed(314)
         tf.random.set_seed(314)
@@ -43,61 +45,12 @@ class Predict(Resource):
         # huber loss
         self.LOSS = "huber_loss"
         self.OPTIMIZER = "adam"
+
     post_args = {
         'filter_id': fields.Str(
             required=True
         )
     }
-    # args = {
-    #     'ticker': fields.Str(
-    #         required=True,
-    #         default='AMZN'
-    #     ),
-    #     'steps': fields.Int(
-    #         required=False,
-    #         default=50
-    #     ),
-    #     # whether to scale feature columns & output price as well
-    #     'scale': fields.Bool(
-    #         required=False,
-    #         default=False
-    #     ),
-    #     'split_by_date': fields.Bool(
-    #         required=False,
-    #         default=False
-    #     ),
-    #     'cols': fields.Str(
-    #         required=True
-    #     ),
-    #     'test_size': fields.Float(
-    #         required=True,
-    #         validate=validate.Range(0, 1)
-    #     ),
-    #     'shuffle': fields.Bool(
-    #         required=False
-    #     ),
-    #     'look_step': fields.Int(
-    #         required=False,
-    #         validate=validate.Range(1, 30)
-    #     ),
-    #     # Window size or the sequence length
-    #     'n_steps': fields.Int(
-    #         required=True
-    #     ),
-    #     'epochs': fields.Int(
-    #         required=True
-    #     ),
-    #     'batch_size': fields.Int(
-    #         required=True
-    #     ),
-    #     # 256 LSTM neurons
-    #     'units': fields.Int(
-    #         required=True
-    #     ),
-    #     'filter_id': fields.Str(
-    #         required=True
-    #     )
-    # }
 
     def get(self):
         result = []
@@ -113,6 +66,9 @@ class Predict(Resource):
 
     @use_kwargs(post_args)
     def post(self, filter_id: str):
+        # Check exits filter on prediction history
+        if (self.history_service.checkExistFilter(filter_id=filter_id) == True):
+            abort(400, f'Filter Exits , {filter_id}')
         # Find Filter Id
         requestFilter: Filters = self.filter_service.getFilterById(filter_id)
         feature_cols = []
@@ -179,9 +135,6 @@ class Predict(Resource):
         # dividing total profit by number of testing samples (number of trades)
         profit_per_trade = total_profit / len(final_df)
 
-        print(
-            f"Future price after {requestFilter.look_step} days is {future_price:.2f}$")
-
         response = {
             'loss': str(loss),
             'future_price': str(future_price),
@@ -191,6 +144,23 @@ class Predict(Resource):
             'total_profit': str(total_profit),
             'profit_per_trade': str(profit_per_trade)
         }
+        # store
+        model = PredictionsHistory()
+        model.loss = str(loss)
+        model.accuracy_score = str(accuracy_score)
+        model.profit_per_trade = str(profit_per_trade)
+        model.future_price = str(future_price)
+        model.total_buy_profit = str(total_buy_profit)
+        model.total_sell_profit = str(total_sell_profit)
+        model.total_profit = str(total_profit)
+        model.user_id = str(requestFilter.user_id)
+        model.filter_id = str(requestFilter.id)
+
+        try:
+            self.history_service.save(model)
+        except:
+            abort(500, 'Save model error')
+
         return response, 201
 
 
@@ -204,7 +174,7 @@ class StockData(Resource):
         )
     }
 
-    @use_kwargs(args, location="query")
+    @use_kwargs(args, location='query')
     def get(self, ticker: str):
         data = self.helper.load_df_ticker(ticker=ticker)
         # print(data)
