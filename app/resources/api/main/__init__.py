@@ -1,19 +1,23 @@
 from flask_restful import Resource, abort
+from flask import jsonify
 import numpy as np
 import json
 import random
 import tensorflow as tf
 import time
 from resources.helpers import Helpers
-from webargs import fields, validate
+from webargs import fields
 from webargs.flaskparser import use_kwargs
 from resources.services.predict import PredictService
+from resources.services.filters import FilterService
+from resources.models.filters import Filters
 
 
 class Predict(Resource):
     def __init__(self):
         self.helper = Helpers()
         self.service = PredictService()
+        self.filter_service = FilterService()
         # set seed, so we can get the same results after rerunning several times
         np.random.seed(314)
         tf.random.set_seed(314)
@@ -39,54 +43,61 @@ class Predict(Resource):
         # huber loss
         self.LOSS = "huber_loss"
         self.OPTIMIZER = "adam"
-
-    args = {
-        'ticker': fields.Str(
-            required=True,
-            default='AMZN'
-        ),
-        'steps': fields.Int(
-            required=False,
-            default=50
-        ),
-        # whether to scale feature columns & output price as well
-        'scale': fields.Bool(
-            required=False,
-            default=False
-        ),
-        'split_by_date': fields.Bool(
-            required=False,
-            default=False
-        ),
-        'cols': fields.Str(
+    post_args = {
+        'filter_id': fields.Str(
             required=True
-        ),
-        'test_size': fields.Float(
-            required=True,
-            validate=validate.Range(0, 1)
-        ),
-        'shuffle': fields.Bool(
-            required=False
-        ),
-        'look_step': fields.Int(
-            required=False,
-            validate=validate.Range(1, 30)
-        ),
-        # Window size or the sequence length
-        'n_steps': fields.Int(
-            required=True
-        ),
-        'epochs': fields.Int(
-            required=True
-        ),
-        'batch_size': fields.Int(
-            required=True
-        ),
-        # 256 LSTM neurons
-        'units': fields.Int(
-            required=True
-        ),
+        )
     }
+    # args = {
+    #     'ticker': fields.Str(
+    #         required=True,
+    #         default='AMZN'
+    #     ),
+    #     'steps': fields.Int(
+    #         required=False,
+    #         default=50
+    #     ),
+    #     # whether to scale feature columns & output price as well
+    #     'scale': fields.Bool(
+    #         required=False,
+    #         default=False
+    #     ),
+    #     'split_by_date': fields.Bool(
+    #         required=False,
+    #         default=False
+    #     ),
+    #     'cols': fields.Str(
+    #         required=True
+    #     ),
+    #     'test_size': fields.Float(
+    #         required=True,
+    #         validate=validate.Range(0, 1)
+    #     ),
+    #     'shuffle': fields.Bool(
+    #         required=False
+    #     ),
+    #     'look_step': fields.Int(
+    #         required=False,
+    #         validate=validate.Range(1, 30)
+    #     ),
+    #     # Window size or the sequence length
+    #     'n_steps': fields.Int(
+    #         required=True
+    #     ),
+    #     'epochs': fields.Int(
+    #         required=True
+    #     ),
+    #     'batch_size': fields.Int(
+    #         required=True
+    #     ),
+    #     # 256 LSTM neurons
+    #     'units': fields.Int(
+    #         required=True
+    #     ),
+    #     'filter_id': fields.Str(
+    #         required=True
+    #     )
+    # }
 
     def get(self):
         result = []
@@ -100,38 +111,28 @@ class Predict(Resource):
         # print(json.dumps(result))
         return data, 200
 
-    @use_kwargs(args)
-    def post(self,
-             ticker: str,
-             steps: int,
-             scale: bool,
-             split_by_date: bool,
-             cols: str,
-             test_size: float,
-             shuffle: bool,
-             look_step: int,
-             n_steps: int,
-             epochs: int,
-             batch_size: int,
-             units: int):
+    @use_kwargs(post_args)
+    def post(self, filter_id: str):
+        # Find Filter Id
+        requestFilter: Filters = self.filter_service.getFilterById(filter_id)
         feature_cols = []
-        if len(cols):
-            feature_cols = cols.split(',')
-        print(ticker, steps, scale, split_by_date, feature_cols)
+        if len(requestFilter.cols):
+            feature_cols = requestFilter.cols.split(',')
+        # print(ticker, steps, scale, split_by_date, feature_cols)
         data = self.helper.load_stock_data(
-            ticker=ticker,
-            n_steps=steps,
-            scale=scale,
-            split_by_date=split_by_date,
-            shuffle=shuffle,
-            lookup_step=look_step,
-            test_size=test_size,
+            ticker=requestFilter.serialize['ticker'],
+            n_steps=requestFilter.steps,
+            scale=requestFilter.scale,
+            split_by_date=requestFilter.split_by_date,
+            shuffle=requestFilter.shuffle,
+            lookup_step=requestFilter.look_step,
+            test_size=requestFilter.test_size,
             feature_columns=feature_cols
         )
         model = self.service.create_model(
-            sequence_length=steps,
+            sequence_length=requestFilter.steps,
             n_features=len(feature_cols),
-            units=units,
+            units=requestFilter.units,
             cell=self.CELL,
             n_layers=self.N_LAYERS,
             dropout=self.DROPOUT,
@@ -142,8 +143,8 @@ class Predict(Resource):
         history = model.fit(
             data["X_train"],
             data["y_train"],
-            batch_size=batch_size,
-            epochs=epochs,
+            batch_size=requestFilter.batch_size,
+            epochs=requestFilter.epochs,
             validation_data=(data["X_test"], data["y_test"]),
             verbose=1
         )
@@ -152,12 +153,12 @@ class Predict(Resource):
 
         # Predict Model ,Data
         future_price = self.service.predict(
-            model, data, scale=scale, n_steps=n_steps)
+            model, data, scale=requestFilter.scale, n_steps=requestFilter.n_steps)
 
         # evaluate the model
         loss, mae = model.evaluate(data["X_test"], data["y_test"], verbose=0)
         # calculate the mean absolute error (inverse scaling)
-        if scale:
+        if requestFilter.scale:
             mean_absolute_error = data["column_scaler"]["adjclose"].inverse_transform([[mae]])[
                 0][0]
         else:
@@ -165,7 +166,7 @@ class Predict(Resource):
 
         # get the final dataframe for the testing set
         final_df = self.service.get_final_df(
-            model, data, scale=scale, look_step=look_step)
+            model, data, scale=requestFilter.scale, look_step=requestFilter.look_step)
 
         # we calculate the accuracy by counting the number of positive profits
         accuracy_score = (len(final_df[final_df['sell_profit'] > 0]) +
@@ -179,7 +180,7 @@ class Predict(Resource):
         profit_per_trade = total_profit / len(final_df)
 
         print(
-            f"Future price after {look_step} days is {future_price:.2f}$")
+            f"Future price after {requestFilter.look_step} days is {future_price:.2f}$")
 
         response = {
             'loss': str(loss),
@@ -192,10 +193,19 @@ class Predict(Resource):
         }
         return response, 201
 
-# class PredictionHistory(Resource):
-#     def __init__(self):
-#         self.service = PredictService()
 
-#     def get(self, id): ## show plot
-#         self.service.plot_graph()
-#         return df
+class StockData(Resource):
+    def __init__(self) -> None:
+        self.helper = Helpers()
+
+    args = {
+        'ticker': fields.Str(
+            required=True
+        )
+    }
+
+    @use_kwargs(args, location="query")
+    def get(self, ticker: str):
+        data = self.helper.load_df_ticker(ticker=ticker)
+        # print(data)
+        return data, 200

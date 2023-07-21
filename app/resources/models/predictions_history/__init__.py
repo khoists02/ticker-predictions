@@ -1,5 +1,6 @@
-from sqlalchemy import Column, UUID, String
+from sqlalchemy import Column, UUID, String, Table
 from resources.database import db
+
 
 class PredictionsHistory(db.Model):
     id = Column(UUID, primary_key=True)
@@ -15,23 +16,24 @@ class PredictionsHistory(db.Model):
 
     def __repr__(self):
         return '<PredictionsHistory %r>' % self.filter_id
-    
+
     @property
     def serialize(self):
         """Return object data in easily serializable format"""
         return {
-          'id': self.id,
-          'loss': self.loss,
-          'future_price': self.future_price,
-          'accuracy_score': self.accuracy_score,
-          'total_buy_profit': self.total_buy_profit,
-          'total_sell_profit': self.total_sell_profit,
-          'total_profit': self.total_profit,
-          'profit_per_trade': self.profit_per_trade,
-          'filter_id': self.filter_id,
-          'user_id': self.user_id
-       }
-    
+            'id': str(self.id),
+            'loss': self.loss,
+            'future_price': self.future_price,
+            'accuracy_score': self.accuracy_score,
+            'total_buy_profit': self.total_buy_profit,
+            'total_sell_profit': self.total_sell_profit,
+            'total_profit': self.total_profit,
+            'profit_per_trade': self.profit_per_trade,
+            'filter_id': str(self.filter_id),
+            'user_id': str(self.user_id)
+        }
+
+
 class PredictionsHistoryQuery:
     def __init__(self) -> None:
         pass

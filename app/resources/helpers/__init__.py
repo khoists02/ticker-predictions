@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 from collections import deque
 
+
 class Helpers:
     def __init__(self) -> None:
         pass
@@ -16,8 +17,20 @@ class Helpers:
         np.random.set_state(state)
         np.random.shuffle(b)
 
+    def load_df_ticker(self, ticker):
+        if isinstance(ticker, str):
+            # load it from yahoo_fin library
+            df = si.get_data(ticker, index_as_date=False)
+        elif isinstance(ticker, pd.DataFrame):
+            # already loaded, use it directly
+            df = ticker
+        else:
+            raise TypeError(
+                "ticker can be either a str or a `pd.DataFrame` instances")
+        return df.to_json(orient='records')
+
     def load_stock_data(self, ticker, n_steps=50, scale=True, shuffle=True, lookup_step=1, split_by_date=True,
-                test_size=0.2, feature_columns=['adjclose', 'volume', 'open', 'high', 'low']):
+                        test_size=0.2, feature_columns=['adjclose', 'volume', 'open', 'high', 'low']):
         if isinstance(ticker, str):
             # load it from yahoo_fin library
             df = si.get_data(ticker)
@@ -25,8 +38,9 @@ class Helpers:
             # already loaded, use it directly
             df = ticker
         else:
-            raise TypeError("ticker can be either a str or a `pd.DataFrame` instances")
-        
+            raise TypeError(
+                "ticker can be either a str or a `pd.DataFrame` instances")
+
         # this will contain all the elements we want to return from this function
         result = {}
         # we will also return the original dataframe itself
@@ -42,7 +56,8 @@ class Helpers:
             # scale the data (prices) from 0 to 1
             for column in feature_columns:
                 scaler = preprocessing.MinMaxScaler()
-                df[column] = scaler.fit_transform(np.expand_dims(df[column].values, axis=1))
+                df[column] = scaler.fit_transform(
+                    np.expand_dims(df[column].values, axis=1))
                 column_scaler[column] = scaler
             # add the MinMaxScaler instances to the result returned
             result["column_scaler"] = column_scaler
@@ -62,7 +77,8 @@ class Helpers:
         # get the last sequence by appending the last `n_step` sequence with `lookup_step` sequence
         # for instance, if n_steps=50 and lookup_step=10, last_sequence should be of 60 (that is 50+10) length
         # this last_sequence will be used to predict future stock prices that are not available in the dataset
-        last_sequence = list([s[:len(feature_columns)] for s in sequences]) + list(last_sequence)
+        last_sequence = list([s[:len(feature_columns)]
+                             for s in sequences]) + list(last_sequence)
         last_sequence = np.array(last_sequence).astype(np.float32)
         # add to result
         result['last_sequence'] = last_sequence
@@ -79,8 +95,8 @@ class Helpers:
             train_samples = int((1 - test_size) * len(X))
             result["X_train"] = X[:train_samples]
             result["y_train"] = y[:train_samples]
-            result["X_test"]  = X[train_samples:]
-            result["y_test"]  = y[train_samples:]
+            result["X_test"] = X[train_samples:]
+            result["y_test"] = y[train_samples:]
             if shuffle:
                 # shuffle the datasets for training (if shuffle parameter is set)
                 self.shuffle_in_unison(result["X_train"], result["y_train"])
@@ -88,15 +104,17 @@ class Helpers:
         else:
             # split the dataset randomly
             result["X_train"], result["X_test"], result["y_train"], result["y_test"] = train_test_split(X, y,
-                                                                                    test_size=test_size, shuffle=shuffle)
+                                                                                                        test_size=test_size, shuffle=shuffle)
         # get the list of test set dates
         dates = result["X_test"][:, -1, -1]
         # retrieve test features from the original dataframe
         result["test_df"] = result["df"].loc[dates]
         # remove duplicated dates in the testing dataframe
-        result["test_df"] = result["test_df"][~result["test_df"].index.duplicated(keep='first')]
+        result["test_df"] = result["test_df"][~result["test_df"].index.duplicated(
+            keep='first')]
         # remove dates from the training/testing sets & convert to float32
-        result["X_train"] = result["X_train"][:, :, :len(feature_columns)].astype(np.float32)
-        result["X_test"] = result["X_test"][:, :, :len(feature_columns)].astype(np.float32)
+        result["X_train"] = result["X_train"][:, :,
+                                              :len(feature_columns)].astype(np.float32)
+        result["X_test"] = result["X_test"][:, :,
+                                            :len(feature_columns)].astype(np.float32)
         return result
-
