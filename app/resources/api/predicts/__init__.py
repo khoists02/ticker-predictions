@@ -178,5 +178,26 @@ class StockData(Resource):
     @use_kwargs(args, location='query')
     def get(self, ticker: str):
         data = self.helper.load_df_ticker(ticker=ticker)
+        balance_sheet = self.helper.get_balance_sheet(ticker=ticker)
+        # print(balance_sheet)
+        # print(type(balance_sheet))
         # print(data)
+
+        cash_flow = self.helper.get_cash_flow(ticker=ticker)
+        # print(str(cash_flow))
         return data, 200
+
+
+class StockBalanceSheet(Resource):
+    def __init__(self) -> None:
+        self.helper = Helpers()
+
+    args = {
+        'ticker': fields.Str(
+            required=True
+        )
+    }
+
+    @use_kwargs(args, location='query')
+    def get(self, ticker: str):
+        return self.helper.get_balance_sheet(ticker=ticker)

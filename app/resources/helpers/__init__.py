@@ -118,3 +118,13 @@ class Helpers:
         result["X_test"] = result["X_test"][:, :,
                                             :len(feature_columns)].astype(np.float32)
         return result
+
+    def get_balance_sheet(self, ticker):
+        return si.get_balance_sheet(ticker=ticker).to_json(orient='records')
+
+    def get_cash_flow(self, ticker):
+        df = si.get_cash_flow(ticker=ticker)
+        result = {}
+        # we will also return the original dataframe itself
+        result['df'] = df.copy()
+        return result
