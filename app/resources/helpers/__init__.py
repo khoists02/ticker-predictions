@@ -4,6 +4,7 @@ from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 import pandas as pd
 from collections import deque
+import yfinance as yf
 
 
 class Helpers:
@@ -120,11 +121,13 @@ class Helpers:
         return result
 
     def get_balance_sheet(self, ticker):
-        return si.get_balance_sheet(ticker=ticker).to_json(orient='records')
+        ticker_rs = yf.Ticker(ticker=ticker)
+
+        return ticker_rs.get_balance_sheet().to_json()
 
     def get_cash_flow(self, ticker):
-        df = si.get_cash_flow(ticker=ticker)
-        result = {}
-        # we will also return the original dataframe itself
-        result['df'] = df.copy()
-        return result
+        ticker_rs = yf.Ticker(ticker=ticker)
+        return ticker_rs.get_cash_flow().to_json()
+
+    def get_quote_table(self, ticker: str):
+        return si.get_quote_table(ticker=ticker)

@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from flask_restful import Api, abort
-from resources.api.predicts import Predict, StockData
+from resources.api.predicts import Predict, StockData, StockBalanceSheet, StockCashFlowSheet
 from resources.api.prediction_history import PredictionsHistory
 from webargs.flaskparser import parser
 from resources.database import db
@@ -20,6 +20,8 @@ db.init_app(app)
 api.add_resource(Predict, '/api/v1/predict')
 api.add_resource(PredictionsHistory, '/api/v1/history')
 api.add_resource(StockData, '/api/v1/data')
+api.add_resource(StockCashFlowSheet, '/api/v1/cashflow')
+api.add_resource(StockData, '/api/v1/balancesheet')
 
 
 @parser.error_handler
