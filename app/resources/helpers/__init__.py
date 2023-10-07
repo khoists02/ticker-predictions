@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 from collections import deque
 import yfinance as yf
+from datetime import date
 
 
 class Helpers:
@@ -18,10 +19,18 @@ class Helpers:
         np.random.set_state(state)
         np.random.shuffle(b)
 
-    def load_df_ticker(self, ticker):
+    def load_df_ticker(self, ticker, start, end):
+        print(start, end)
         if isinstance(ticker, str):
+            if start is None:
+                start = date.today()
+
+            if end is None:
+                end = date.today()
+            print(start)
             # load it from yahoo_fin library
-            df = si.get_data(ticker, index_as_date=False)
+            df = si.get_data(ticker, start_date=start,
+                             end_date=end, index_as_date=False)
         elif isinstance(ticker, pd.DataFrame):
             # already loaded, use it directly
             df = ticker

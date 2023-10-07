@@ -1,10 +1,11 @@
 from flask_restful import Resource
 from flask import abort
 import numpy as np
-import json
 import random
 import tensorflow as tf
 import time
+from datetime import datetime
+import json
 from resources.helpers import Helpers
 from webargs import fields
 from webargs.flaskparser import use_kwargs
@@ -172,13 +173,21 @@ class StockData(Resource):
     args = {
         'ticker': fields.Str(
             required=True
-        )
+        ),
+        'start': fields.Str(
+            required=True,
+            default=None
+        ),
+        'end': fields.Str(
+            required=True,
+            default=None
+        ),
     }
 
     @use_kwargs(args, location='query')
-    def get(self, ticker: str):
-        data = self.helper.load_df_ticker(ticker=ticker)
-        return data, 200
+    def get(self, ticker: str, start, end):
+        data = self.helper.load_df_ticker(ticker=ticker, start=start, end=end)
+        return json.loads(data), 200
 
 
 class StockBalanceSheet(Resource):
