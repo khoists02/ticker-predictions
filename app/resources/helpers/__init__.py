@@ -29,6 +29,8 @@ class Helpers:
                 end = date.today()
             print(start)
             # load it from yahoo_fin library
+            # Interval
+            # must be "1d", "1wk", "1mo", or "1m" for daily, weekly, monthly, or minute data.
             df = si.get_data(ticker, start_date=start,
                              end_date=end, index_as_date=False)
         elif isinstance(ticker, pd.DataFrame):
@@ -140,3 +142,10 @@ class Helpers:
 
     def get_quote_table(self, ticker: str):
         return si.get_quote_table(ticker=ticker)
+
+    def get_ticker_daily(self, ticker):
+        ticker_rs = yf.Ticker(ticker=ticker)
+        # meta = ticker_rs.history(
+        #     period="1d", interval="15m", start="2023-08-08", end="2023-08-08")
+        # print(meta.to_json(orient='records'))
+        return ticker_rs.get_info()

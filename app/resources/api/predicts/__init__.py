@@ -190,6 +190,21 @@ class StockData(Resource):
         return json.loads(data), 200
 
 
+class StockInfo(Resource):
+    def __init__(self) -> None:
+        self.helper = Helpers()
+
+    args = {
+        'ticker': fields.Str(
+            required=True
+        )
+    }
+
+    @use_kwargs(args, location='query')
+    def get(self, ticker: str):
+        return self.helper.get_ticker_daily(ticker=ticker), 200
+
+
 class StockBalanceSheet(Resource):
     def __init__(self) -> None:
         self.helper = Helpers()
@@ -202,7 +217,7 @@ class StockBalanceSheet(Resource):
 
     @use_kwargs(args, location='query')
     def get(self, ticker: str):
-        return self.helper.get_balance_sheet(ticker=ticker)
+        return self.helper.get_balance_sheet(ticker=ticker), 200
 
 
 class StockCashFlowSheet(Resource):
