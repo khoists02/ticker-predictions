@@ -1,7 +1,8 @@
 from flask_restful import Resource
 from flask import abort
 from webargs import fields
-from webargs.flaskparser import use_kwargs
+from webargs.flaskparser import use_kwargs, use_args
+from resources.api.settings import SettingQuery, Settings
 
 
 class TickerSettings(Resource):
@@ -22,10 +23,35 @@ class TickersAccount(Resource):
         ),
     }
 
+    body = {
+        'balance': fields.Float(
+            required=True
+        ),
+        'current': fields.Float(
+            required=True
+        ),
+        'id': fields.Str(
+            required=True
+        ),
+    }
+
     @use_kwargs(args, location='query')
     def get(self, ticker: str):
+
+        qr = SettingQuery()
+        settings: Settings = qr.findByTicker(ticker=ticker)
         return {
-            "balance": 4366.65,
-            "current": 5.49,
-            "ticker": ticker
+            "balance": settings.balance,
+            "current": settings.current,
+            "ticker": settings.ticker,
         }, 200
+
+    @use_args(body)
+    def put(self, body):
+        print(body)
+        qr = SettingQuery()
+        qr.updateSetting(
+            id=body["id"], balance=body["balance"], current=body["current"])
+        return {
+            "message": "ok",
+        }, 201

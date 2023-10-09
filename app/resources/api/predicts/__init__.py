@@ -4,7 +4,6 @@ import numpy as np
 import random
 import tensorflow as tf
 import time
-from datetime import datetime
 import json
 from resources.helpers import Helpers
 from webargs import fields
@@ -186,8 +185,12 @@ class StockData(Resource):
 
     @use_kwargs(args, location='query')
     def get(self, ticker: str, start, end):
-        data = self.helper.load_df_ticker(ticker=ticker, start=start, end=end)
-        return json.loads(data), 200
+        try:
+            data = self.helper.load_df_ticker(
+                ticker=ticker, start=start, end=end)
+            return json.loads(data), 200
+        except Exception as e:
+            return [], 200
 
 
 class StockInfo(Resource):
