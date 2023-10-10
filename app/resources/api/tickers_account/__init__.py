@@ -25,7 +25,7 @@ class TickersAccount(Resource):
 
     body = {
         'balance': fields.Float(
-            required=True
+            required=True,
         ),
         'current': fields.Float(
             required=True
@@ -44,6 +44,7 @@ class TickersAccount(Resource):
             "balance": settings.balance,
             "current": settings.current,
             "ticker": settings.ticker,
+            "id": str(settings.id)
         }, 200
 
     @use_args(body)
