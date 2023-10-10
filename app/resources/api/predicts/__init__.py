@@ -236,3 +236,36 @@ class StockCashFlowSheet(Resource):
     @use_kwargs(args, location='query')
     def get(self, ticker: str):
         return self.helper.get_cash_flow(ticker=ticker)
+
+
+class StockDataDaily(Resource):
+    def __init__(self) -> None:
+        self.helper = Helpers()
+
+    args = {
+        'ticker': fields.Str(
+            required=True
+        ),
+        'start': fields.Str(
+            required=True,
+            default=None
+        ),
+        'end': fields.Str(
+            required=True,
+            default=None
+        ),
+        'interval': fields.Str(
+            required=True,
+            default=None
+        ),
+    }
+
+    @use_kwargs(args, location='query')
+    def get(self, ticker: str, start, end, interval):
+        try:
+            data = self.helper.load_stock_by_day(
+                ticker=ticker, start=start, end=end, interval=interval)
+            return json.loads(data), 200
+        except Exception as e:
+            print(e)
+            return [], 200

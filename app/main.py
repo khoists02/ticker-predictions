@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restful import Api, abort
-from resources.api.predicts import Predict, StockData, StockInfo, StockCashFlowSheet
+from resources.api.predicts import Predict, StockData, StockInfo, StockCashFlowSheet, StockDataDaily
 from resources.api.prediction_history import PredictionsHistory
 from resources.api.tickers_account import TickersAccount, TickerSettings
 from webargs.flaskparser import parser
@@ -25,6 +25,7 @@ db.init_app(app)
 api.add_resource(Predict, '/api/v1/predict')
 api.add_resource(PredictionsHistory, '/api/v1/history')
 api.add_resource(StockData, '/api/v1/data')
+api.add_resource(StockDataDaily, '/api/v1/daily')
 api.add_resource(StockCashFlowSheet, '/api/v1/cashflow')
 api.add_resource(TickersAccount, '/api/v1/account')
 api.add_resource(StockInfo, '/api/v1/info')

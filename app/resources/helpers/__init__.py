@@ -150,3 +150,30 @@ class Helpers:
         #     period="1d", interval="15m", start="2023-08-08", end="2023-08-08")
         # print(meta.to_json(orient='records'))
         return ticker_rs.get_info()
+
+    def load_stock_by_day(self, ticker, start, end, interval):
+        ticker_rs = yf.Ticker(ticker=ticker)
+        if isinstance(ticker, str):
+            print("start")
+            if start is None:
+                start = date.today()
+
+            if end is None:
+                end = date.today()
+            # load it from yahoo_fin library
+            # Interval
+            # Valid intervals: 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
+            print(start, end)
+            df = ticker_rs.history(start=start, end=end,
+                                   interval=interval, period="max")
+
+            print("loaded!!!")
+            return df.to_json(orient='records')
+
+        elif isinstance(ticker, pd.DataFrame):
+            # already loaded, use it directly
+            df = ticker
+            return df.to_json(orient='records')
+        else:
+            raise TypeError(
+                "ticker can be either a str or a `pd.DataFrame` instances")
