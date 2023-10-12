@@ -3,6 +3,7 @@ from flask_restful import Api, abort
 from resources.api.predicts import Predict, StockData, StockInfo, StockCashFlowSheet, StockDataDaily
 from resources.api.prediction_history import PredictionsHistory
 from resources.api.tickers_account import TickersAccount, TickerSettings
+from resources.api.favorite_controller import FavoriteController
 from webargs.flaskparser import parser
 from resources.database import db
 from resources.config import AppConfig
@@ -30,6 +31,7 @@ api.add_resource(StockCashFlowSheet, '/api/v1/cashflow')
 api.add_resource(TickersAccount, '/api/v1/account')
 api.add_resource(StockInfo, '/api/v1/info')
 api.add_resource(TickerSettings, '/api/v1/settings')
+api.add_resource(FavoriteController, '/api/v1/favorites')
 # api.add_resource(StockData, '/api/v1/balancesheet')
 
 

@@ -7,6 +7,7 @@ class Settings(db.Model):
     ticker = Column(String, nullable=False)
     balance = Column(Float, nullable=True)
     current = Column(Float, nullable=True)
+    count = Column(Float, nullable=False)
 
 
 class SettingQuery:
@@ -14,9 +15,10 @@ class SettingQuery:
         return db.session.query(Settings).filter(
             Settings.ticker == ticker).first()
 
-    def updateSetting(self, id, balance, current) -> None:
+    def updateSetting(self, id, balance, current, count) -> None:
         st: Settings = db.session.query(Settings).filter(
             Settings.id == id).first()
         st.balance = balance
         st.current = current
+        st.count = count
         db.session.commit()

@@ -1,0 +1,1 @@
+ALTER TABLE settings ADD count float not null default 0;
