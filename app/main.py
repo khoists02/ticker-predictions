@@ -16,7 +16,10 @@ appConfig = AppConfig()
 app = Flask(__name__, template_folder='templates')
 mail_app = Mail(app=app)
 
-CORS(app, origins=["https://localhost:3000", "https://volvo.local:3000"], allow_headers=[
+origins = ["https://localhost:3000",
+           "http://localhost:3000", "https://volvo.local:3000"]
+
+CORS(app, origins=origins, allow_headers=[
     "Content-Type", "Authorization", "Access-Control-Allow-Credentials"],
     supports_credentials=True)
 app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'
