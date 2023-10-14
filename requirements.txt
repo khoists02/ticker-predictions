@@ -14,3 +14,5 @@ yahoo-fin==0.8.9.1
 webargs==8.3.0
 matplotlib==3.7.2
 yfinance==0.2.26
+Flask-Mail==0.9.1
+mailtrap==2.1.0

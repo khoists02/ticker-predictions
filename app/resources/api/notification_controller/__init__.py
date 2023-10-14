@@ -1,9 +1,9 @@
 from flask_restful import Resource
-from flask import abort
 from webargs import fields
-from webargs.flaskparser import use_kwargs, use_args
-from resources.models.notification import Notification, NotificationQuery
+from webargs.flaskparser import use_args
+from resources.models.notification import NotificationQuery
 from resources.helpers import Helpers
+import mailtrap as mt
 
 
 class NotificationController(Resource):
@@ -34,6 +34,17 @@ class NotificationController(Resource):
     def get(self):
         qr = NotificationQuery()
         notifications = qr.findAll()
+        # mail = mt.Mail(
+        #     sender=mt.Address(email="mailtrap@example.com",
+        #                       name="Mailtrap Test"),
+        #     to=[mt.Address(email="khoi.kioto@gmail.com")],
+        #     subject="You are awesome!",
+        #     text="Congrats for sending test email with Mailtrap!",
+        # )
+
+        # # create client and send
+        # client = mt.MailtrapClient(token="8a9fb48cf48667640dc469dfb0ccde58")
+        # client.send(mail)
         return {
             'content': [i.serialize for i in notifications]
         }, 200
@@ -69,6 +80,5 @@ class NotificationDetails(Resource):
 
     def put(self, id):
         qr = NotificationQuery()
-        print(id)
         qr.read(id=id)
         return {'message': 'No Content'}, 200

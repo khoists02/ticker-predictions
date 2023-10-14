@@ -8,19 +8,26 @@ from resources.api.notification_controller import NotificationController, Notifi
 from webargs.flaskparser import parser
 from resources.database import db
 from resources.config import AppConfig
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
+from flask_mail import Mail, Message
 
 appConfig = AppConfig()
-
-
 app = Flask(__name__)
+mail = Mail(app=app)
 CORS(app, origins="http://localhost:3002", allow_headers=[
     "Content-Type", "Authorization", "Access-Control-Allow-Credentials"],
     supports_credentials=True)
+app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USERNAME'] = '75484011e5c514'
+app.config['MAIL_PASSWORD'] = 'b82e5a6b2d862e'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config["SQLALCHEMY_DATABASE_URI"] = appConfig.SQLALCHEMY_DATABASE_URI
+mail = Mail(app=app)
 api = Api(app)
 
 # Database Config
-app.config["SQLALCHEMY_DATABASE_URI"] = appConfig.SQLALCHEMY_DATABASE_URI
 db.init_app(app)
 
 # Routers
@@ -45,6 +52,15 @@ api.add_resource(NotificationDetails,
 @parser.error_handler
 def handle_request_parsing_error(err, req, schema, *, error_status_code, error_headers):
     abort(error_status_code, errors=err.messages)
+
+
+@app.route("/")
+def index():
+    msg = Message('Hello from the other side!',
+                  sender='peter@mailtrap.io', recipients=['paul@mailtrap.io'])
+    msg.body = "Hey Paul, sending you this email from my Flask app, lmk if it works"
+    mail.send(msg)
+    return "Message sent!"
 
 
 if __name__ == '__main__':
