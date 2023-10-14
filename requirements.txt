@@ -3,7 +3,7 @@ Flask-Cors==3.0.10
 waitress==2.1.2
 Flask-RESTful==0.3.10
 # tensorflow==2.13.0
-# pandas==2.0.2
+pandas==2.0.2
 # pika==1.2.0
 # rabbitmq-pika-flask==1.2.33
 psycopg2-binary==2.9.6
@@ -15,4 +15,4 @@ webargs==8.3.0
 # matplotlib==3.7.2s
 yfinance==0.2.26
 Flask-Mail==0.9.1
-mailtrap==2.1.0
+mailtrap==2.0.1
