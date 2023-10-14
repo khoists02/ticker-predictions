@@ -44,7 +44,9 @@ class NotificationController(Resource):
         qr.createOne(body=body)
         if float(body['per']) >= 5 or float(body['per']) <= -5:
             email_service = SendMailStockService()
+            txt = 'increase' if float(body['per']) > 0 else 'decrease'
             email_service.send_email(
+                txt=txt,
                 username='khoi.le', link='http://localhost:3002/histories/BLND', ticker=body['ticker'], per=body['per'], close=body['close'], updatedAt=body['updatedAt'])
         return {'message': 'Create Success'}, 201
 
