@@ -3,7 +3,7 @@ from webargs import fields
 from webargs.flaskparser import use_args
 from resources.models.notification import NotificationQuery
 from resources.helpers import Helpers
-import mailtrap as mt
+from resources.services.send_mail import SendMailStockService
 
 
 class NotificationController(Resource):
@@ -34,17 +34,6 @@ class NotificationController(Resource):
     def get(self):
         qr = NotificationQuery()
         notifications = qr.findAll()
-        # mail = mt.Mail(
-        #     sender=mt.Address(email="mailtrap@example.com",
-        #                       name="Mailtrap Test"),
-        #     to=[mt.Address(email="khoi.kioto@gmail.com")],
-        #     subject="You are awesome!",
-        #     text="Congrats for sending test email with Mailtrap!",
-        # )
-
-        # # create client and send
-        # client = mt.MailtrapClient(token="8a9fb48cf48667640dc469dfb0ccde58")
-        # client.send(mail)
         return {
             'content': [i.serialize for i in notifications]
         }, 200
@@ -53,6 +42,10 @@ class NotificationController(Resource):
     def post(self, body):
         qr = NotificationQuery()
         qr.createOne(body=body)
+        if float(body['per']) >= 5 or float(body['per']) <= -5:
+            email_service = SendMailStockService()
+            email_service.send_email(
+                username='khoi.le', link='http://localhost:3002/histories/BLND', ticker=body['ticker'], per=body['per'], close=body['close'], updatedAt=body['updatedAt'])
         return {'message': 'Create Success'}, 201
 
 

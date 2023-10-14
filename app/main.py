@@ -10,10 +10,12 @@ from resources.database import db
 from resources.config import AppConfig
 from flask_cors import CORS
 from flask_mail import Mail, Message
-
+from resources.services.mail import mail
+# mail_service = MailService()
 appConfig = AppConfig()
-app = Flask(__name__)
-mail = Mail(app=app)
+app = Flask(__name__, template_folder='templates')
+mail_app = Mail(app=app)
+
 CORS(app, origins="http://localhost:3002", allow_headers=[
     "Content-Type", "Authorization", "Access-Control-Allow-Credentials"],
     supports_credentials=True)
@@ -24,7 +26,8 @@ app.config['MAIL_PASSWORD'] = 'b82e5a6b2d862e'
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = appConfig.SQLALCHEMY_DATABASE_URI
-mail = Mail(app=app)
+mail_app = Mail(app=app)
+mail = mail_app
 api = Api(app)
 
 # Database Config
