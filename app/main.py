@@ -4,6 +4,7 @@ from resources.api.predicts import Predict, StockData, StockInfo, StockCashFlowS
 from resources.api.prediction_history import PredictionsHistory
 from resources.api.tickers_account import TickersAccount, TickerSettings
 from resources.api.favorite_controller import FavoriteController
+from resources.api.notification_controller import NotificationController, NotificationDetails, NotificationCount
 from webargs.flaskparser import parser
 from resources.database import db
 from resources.config import AppConfig
@@ -32,6 +33,12 @@ api.add_resource(TickersAccount, '/api/v1/account')
 api.add_resource(StockInfo, '/api/v1/info')
 api.add_resource(TickerSettings, '/api/v1/settings')
 api.add_resource(FavoriteController, '/api/v1/favorites')
+
+# Notification
+api.add_resource(NotificationController, '/api/v1/notifications')
+api.add_resource(NotificationCount, '/api/v1/notifications/count')
+api.add_resource(NotificationDetails,
+                 '/api/v1/notifications/<uuid:id>/read')
 # api.add_resource(StockData, '/api/v1/balancesheet')
 
 

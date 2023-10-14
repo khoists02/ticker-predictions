@@ -22,12 +22,15 @@ class FavoriteController(Resource):
         qr = FavoriteQuery()
         favorites = qr.findListByTicker(ticker=ticker)
         symbol_list = [i.serialize['symbol'] for i in favorites]
+        url_list = [i.serialize['url_icon'] for i in favorites]
 
         print(symbol_list)
         rs = []
 
-        for ticker in symbol_list:
-            rs.append(self.helper.get_ticker_daily(ticker=ticker))
+        for idx, ticker in enumerate(symbol_list):
+            item = self.helper.get_ticker_daily(ticker=ticker)
+            item['url_icon'] = url_list[idx]
+            rs.append(item)
 
         return {
             'content': rs

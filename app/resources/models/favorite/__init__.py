@@ -9,6 +9,7 @@ class Favorite(db.Model):
                 server_default=sqlalchemy.text("uuid_generate_v4()"),)
     ticker = Column(String, nullable=False)
     symbol = Column(String, nullable=False)
+    url_icon = Column(String, nullable=False)
 
     def __repr__(self):
         return '<Favorite %r>' % self.serialize
@@ -19,7 +20,8 @@ class Favorite(db.Model):
         return {
             'id': str(self.id),
             'ticker': self.ticker,
-            'symbol': self.symbol
+            'symbol': self.symbol,
+            'url_icon': self.url_icon
         }
 
 
