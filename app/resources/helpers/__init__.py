@@ -132,23 +132,20 @@ class Helpers:
     #                                         :len(feature_columns)].astype(np.float32)
     #     return result
 
-    def get_balance_sheet(self, ticker):
+    def get_balance_sheet(self, ticker, freq):
         ticker_rs = yf.Ticker(ticker=ticker)
+        rs = ticker_rs.get_balance_sheet(freq=freq)
+        return rs.to_json()
 
-        return ticker_rs.get_balance_sheet().to_json()
-
-    def get_cash_flow(self, ticker):
+    def get_cash_flow(self, ticker, freq):
         ticker_rs = yf.Ticker(ticker=ticker)
-        return ticker_rs.get_cash_flow().to_json()
+        return ticker_rs.get_cash_flow(freq=freq).to_json()
 
     def get_quote_table(self, ticker: str):
         return si.get_quote_table(ticker=ticker)
 
     def get_ticker_daily(self, ticker):
         ticker_rs = yf.Ticker(ticker=ticker)
-        # meta = ticker_rs.history(
-        #     period="1d", interval="15m", start="2023-08-08", end="2023-08-08")
-        # print(meta.to_json(orient='records'))
         return ticker_rs.get_info()
 
     def load_stock_by_day(self, ticker, start, end, interval):

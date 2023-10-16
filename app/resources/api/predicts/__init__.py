@@ -215,12 +215,15 @@ class StockBalanceSheet(Resource):
     args = {
         'ticker': fields.Str(
             required=True
+        ),
+        'freq': fields.Str(
+            required=True
         )
     }
 
     @use_kwargs(args, location='query')
-    def get(self, ticker: str):
-        return self.helper.get_balance_sheet(ticker=ticker), 200
+    def get(self, ticker: str, freq: str):
+        return json.loads(self.helper.get_balance_sheet(ticker=ticker, freq=freq)), 200
 
 
 class StockCashFlowSheet(Resource):
@@ -230,12 +233,15 @@ class StockCashFlowSheet(Resource):
     args = {
         'ticker': fields.Str(
             required=True
+        ),
+        'freq': fields.Str(
+            required=True
         )
     }
 
     @use_kwargs(args, location='query')
-    def get(self, ticker: str):
-        return self.helper.get_cash_flow(ticker=ticker)
+    def get(self, ticker: str, freq: str):
+        return json.loads(self.helper.get_cash_flow(ticker=ticker, freq=freq))
 
 
 class StockDataDaily(Resource):
