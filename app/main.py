@@ -61,14 +61,5 @@ def handle_request_parsing_error(err, req, schema, *, error_status_code, error_h
     abort(error_status_code, errors=err.messages)
 
 
-@app.route("/")
-def index():
-    msg = Message('Hello from the other side!',
-                  sender='peter@mailtrap.io', recipients=['paul@mailtrap.io'])
-    msg.body = "Hey Paul, sending you this email from my Flask app, lmk if it works"
-    mail.send(msg)
-    return "Message sent!"
-
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
