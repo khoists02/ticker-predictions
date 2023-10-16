@@ -4,6 +4,6 @@ CREATE TABLE notifications (
     per float NOT NULL DEFAULT 0,
     "close" float NOT NULL DEFAULT 0,
     "read" bool NOT NULL DEFAULT false,
-    updatedAt varchar,
+    "updatedAt" varchar,
     CONSTRAINT notification_pk PRIMARY KEY (id)
 );

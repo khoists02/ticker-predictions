@@ -1,0 +1,1 @@
+ALTER TABLE settings ADD price_in float not null default 0;
