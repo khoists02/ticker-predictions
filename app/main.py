@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restful import Api, abort
-from resources.api.predicts import StockData, StockInfo, StockCashFlowSheet, StockDataDaily, StockBalanceSheet
+from resources.api.predicts import StockData, StockInfo, StockCashFlowSheet, StockDataDaily, StockBalanceSheet, StockRecommendations
 # from resources.api.prediction_history import PredictionsHistory
 from resources.api.tickers_account import TickersAccount, TickerSettings
 from resources.api.favorite_controller import FavoriteController
@@ -44,6 +44,7 @@ api.add_resource(StockData, '/api/v1/data')
 api.add_resource(StockDataDaily, '/api/v1/daily')
 api.add_resource(StockCashFlowSheet, '/api/v1/cashflow')
 api.add_resource(StockBalanceSheet, '/api/v1/balanceSheet')
+api.add_resource(StockRecommendations, '/api/v1/recommendations')
 api.add_resource(TickersAccount, '/api/v1/account')
 api.add_resource(StockInfo, '/api/v1/info')
 api.add_resource(TickerSettings, '/api/v1/settings')

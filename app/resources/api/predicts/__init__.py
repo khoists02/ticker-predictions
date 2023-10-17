@@ -244,6 +244,21 @@ class StockCashFlowSheet(Resource):
         return json.loads(self.helper.get_cash_flow(ticker=ticker, freq=freq))
 
 
+class StockRecommendations(Resource):
+    def __init__(self) -> None:
+        self.helper = Helpers()
+
+    args = {
+        'ticker': fields.Str(
+            required=True
+        )
+    }
+
+    @use_kwargs(args, location='query')
+    def get(self, ticker: str):
+        return self.helper.get_recommendations(ticker=ticker)
+
+
 class StockDataDaily(Resource):
     def __init__(self) -> None:
         self.helper = Helpers()

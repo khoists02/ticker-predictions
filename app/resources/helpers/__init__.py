@@ -141,6 +141,10 @@ class Helpers:
         ticker_rs = yf.Ticker(ticker=ticker)
         return ticker_rs.get_cash_flow(freq=freq).to_json()
 
+    def get_recommendations(self, ticker):
+        ticker_rs = yf.Ticker(ticker=ticker)
+        return ticker_rs.get_news()
+
     def get_quote_table(self, ticker: str):
         return si.get_quote_table(ticker=ticker)
 

@@ -9,6 +9,7 @@ class Settings(db.Model):
     current = Column(Float, nullable=True)
     count = Column(Float, nullable=False)
     price_in = Column(Float, nullable=False, default=0)
+    price_out = Column(Float, nullable=False, default=0)
 
 
 class SettingQuery:
@@ -16,11 +17,12 @@ class SettingQuery:
         return db.session.query(Settings).filter(
             Settings.ticker == ticker).first()
 
-    def updateSetting(self, id, balance, current, count, priceIn) -> None:
+    def updateSetting(self, id, balance, current, count, priceIn, priceOut) -> None:
         st: Settings = db.session.query(Settings).filter(
             Settings.id == id).first()
         st.balance = balance
         st.current = current
         st.count = count
         st.price_in = priceIn
+        st.price_out = priceOut
         db.session.commit()

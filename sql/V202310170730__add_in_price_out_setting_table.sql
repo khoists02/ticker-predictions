@@ -1,0 +1,1 @@
+ALTER TABLE settings ADD price_out float not null default 0;
