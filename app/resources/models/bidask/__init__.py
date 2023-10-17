@@ -25,9 +25,9 @@ class BidAsk(db.Model):
             'ticker': self.ticker,
             'bid': self.bid,
             'ask': self.ask,
-            'bid_size': self.bid_size,
-            'ask_size': self.ask_size,
-            'updated_at': self.updated_at
+            'bidSize': self.bid_size,
+            'askSize': self.ask_size,
+            'updatedAt': self.updated_at
         }
 
 
@@ -40,11 +40,10 @@ class BidAskQuery:
             .filter(BidAsk.ticker == ticker)
         return rs
 
-    def count(self, ticker, bid, ask, bid_size, ask_size, updated_at) -> int:
+    def count(self, ticker, bid, ask, bid_size, ask_size) -> int:
         rs = db.session.query(BidAsk) \
             .filter(
                 BidAsk.ticker == ticker,
-                BidAsk.updated_at == updated_at,
                 BidAsk.ask == ask,
                 BidAsk.ask_size == ask_size,
                 BidAsk.bid == bid,
@@ -55,7 +54,7 @@ class BidAskQuery:
 
     def create(self, ticker, bid, ask, bid_size, ask_size, updated_at) -> int:
         count = self.count(ticker=ticker, bid=bid, ask=ask,
-                           bid_size=bid_size, ask_size=ask_size, updated_at=updated_at)
+                           bid_size=bid_size, ask_size=ask_size)
 
         if count > 0:
             return 0
