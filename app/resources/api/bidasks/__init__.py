@@ -18,7 +18,7 @@ class BidAskController(Resource):
         'ticker': fields.String(
             required=True,
         ),
-        'updated_at': fields.String(
+        'updatedAt': fields.String(
             required=True,
         ),
         'ask': fields.Float(
@@ -27,10 +27,10 @@ class BidAskController(Resource):
         'bid': fields.Float(
             required=True
         ),
-        'ask_size': fields.Float(
+        'askSize': fields.Float(
             required=True
         ),
-        'bid_size': fields.Float(
+        'bidSize': fields.Float(
             required=True
         ),
     }
@@ -47,7 +47,7 @@ class BidAskController(Resource):
     def post(self, body):
         qr = BidAskQuery()
         count: int = qr.create(ticker=body['ticker'], ask=body['ask'], bid=body['bid'],
-                               ask_size=body['ask_size'], bid_size=body['bid_size'], updated_at=body['updated_at'])
+                               ask_size=body['askSize'], bid_size=body['bidSize'], updated_at=body['updatedAt'])
         if count == 0:
             return {'message': 'Exits'}, 400
         return {'message': 'Create Success'}, 201

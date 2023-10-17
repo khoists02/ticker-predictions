@@ -9,9 +9,7 @@ from webargs.flaskparser import parser
 from resources.database import db
 from resources.config import AppConfig
 from flask_cors import CORS
-from flask_mail import Mail, Message
-from resources.services.mail import mail
-# mail_service = MailService()
+from flask_mail import Mail
 appConfig = AppConfig()
 app = Flask(__name__, template_folder='templates')
 mail_app = Mail(app=app)
