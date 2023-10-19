@@ -6,6 +6,7 @@ from resources.api.tickers_account import TickersAccount, TickerSettings
 from resources.api.prediction_history import TickerEarningDates
 from resources.api.favorite_controller import FavoriteController
 from resources.api.notification_controller import NotificationController, NotificationDetails, NotificationCount
+from resources.api.report import ReportController, ReportByDateController
 from webargs.flaskparser import parser
 from resources.database import db
 from resources.config import AppConfig
@@ -73,6 +74,9 @@ api.add_resource(NotificationController, '/api/v1/notifications')
 api.add_resource(NotificationCount, '/api/v1/notifications/count')
 api.add_resource(NotificationDetails,
                  '/api/v1/notifications/<uuid:id>/read')
+# Report
+api.add_resource(ReportController, '/api/v1/report')
+api.add_resource(ReportByDateController, '/api/v1/reportfilter')
 # api.add_resource(StockData, '/api/v1/balancesheet')
 
 

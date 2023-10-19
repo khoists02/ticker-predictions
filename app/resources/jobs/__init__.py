@@ -87,3 +87,31 @@ class Job:
                 date=str_date, ticker="BLND", increase=count_increase, decrease=count_decrease)
         except:
             print("Unique")
+
+    def count_sessions_compare_prev(self):
+        count_increase = 0
+        count_decrease = 0
+        rs = self.helper.get_ticker_daily(ticker=self.ticker)
+        prev = rs['previousClose']
+        yesterday = self.current_date + datetime.timedelta(days=-1)
+        str_date = yesterday.strftime('%Y-%m-%d')  # format datetime yesterday
+        rs = self.query.find_all_sessions_by_current_date(
+            ticker=self.ticker, date=str_date)
+        if len(rs) > 0:
+            for index, item in enumerate(rs):
+                if item['current_price'] > prev:
+                    count_increase = count_increase + 1
+                elif item['current_price'] == prev:
+                    print("Equal")
+                else:
+                    count_decrease = count_decrease + 1
+
+        print("count increase {}".format(count_increase))
+        print("count decrease {}".format(count_decrease))
+        if count_decrease == 0 and count_increase == 0:
+            return
+        try:
+            self.report_query.create(
+                date=str_date, ticker="BLND", increase=count_increase, decrease=count_decrease)
+        except:
+            print("Unique")
