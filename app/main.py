@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, current_app
 from flask_restful import Api, abort
 from resources.api.predicts import StockData, StockInfo, StockCashFlowSheet, StockDataDaily, StockBalanceSheet, StockRecommendations
 from resources.api.bidasks import BidAskController
@@ -14,9 +14,7 @@ from flask_mail import Mail
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
 import time
-from resources.helpers import Helpers
-import datetime
-
+from resources.jobs import Job
 # set configuration values
 
 
@@ -47,11 +45,9 @@ mail = mail_app
 api = Api(app)
 
 # Database Config
-db.init_app(app)
+# db.init_app(app)
 
-# Routers
-# api.add_resource(Predict, '/api/v1/predict')
-# api.add_resource(PredictionsHistory, '/api/v1/history')
+# routes APIs
 api.add_resource(StockData, '/api/v1/data')
 api.add_resource(StockDataDaily, '/api/v1/daily')
 api.add_resource(StockCashFlowSheet, '/api/v1/cashflow')
@@ -77,35 +73,76 @@ def handle_request_parsing_error(err, req, schema, *, error_status_code, error_h
     abort(error_status_code, errors=err.messages)
 
 
-# date_now = datetime.datetime.now()
-# date_now_fm = date_now.strftime('%Y-%m-%d')
-# date_now_h = date_now.hour
-# print(date_now_h)
+with app.app_context():
+    print("======= Database start... ======")
+    # Database Config
+    db.init_app(app)
+    print("======= Job Context ======")
 
-scheduler = BackgroundScheduler()
+    scheduler = BackgroundScheduler()
 
+    print("==== Add job store ====")
+    scheduler.add_jobstore('sqlalchemy', engine=db.engine)
 
-def my_cron_job():
-    # Code to be executed by the cron job
-    print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
-    # hp = Helpers()
+    print("==== Add main jobs ====")
 
-    # rs = hp.get_ticker_daily("BLND")
-    # print(rs["previousClose"])
-    # print(rs["currentPrice"])
+    # defined jobs
+    # def job_delete_session():
+    #     print("========  Start delete session Job ========")
+    #     print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+    #     with app.app_context():
+    #         new_job = Job(ticker="BLND")
+    #         new_job.delete_sessions()
 
+    #     print("========  End delete session Job ========")
+    #     print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
 
-# Schedule the cron job to run every 1mn
-scheduler.add_job(
-    func=my_cron_job,
-    trigger="interval", seconds=60
-)
+    def job_pm():
+        print("========  Start import data Job at PM ========")
+        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+        with app.app_context():
+            new_job = Job(ticker="BLND")
+            new_job.import_session_data()
 
-# Start the scheduler
-scheduler.start()
+        print("========  End import data Job at PM ========")
+        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
 
-# Shut down the scheduler when exiting the app
-atexit.register(lambda: scheduler.shutdown())
+    def job_am():
+        print("========  Start import data Job at AM ========")
+        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+        with app.app_context():
+            new_job = Job(ticker="BLND")
+            new_job.import_session_data()
+
+        print("========  End import data Job at AM ========")
+        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+
+    # 20-23 *5
+    # Schedule the cron job to run every 5mn from 0AM - 23PM every working day
+    scheduler.add_job(
+        func=job_pm,
+        trigger='cron', day_of_week='mon-fri', hour='20-23', minute='*/5'  # 20PM-23PM
+    )
+
+    # 05-5 *5
+    # Schedule the cron job to run on Saturday from 00 AM - 5AM every 5mn
+    scheduler.add_job(
+        func=job_am,
+        trigger='cron', day_of_week='mon-sat', hour='0-5', minute='*/5'  # 0AM - 5AM
+    )
+
+    # 6AM
+    # scheduler.add_job(
+    #     func=job_delete_session,
+    #     trigger='cron', day_of_week='mon-sat', hour=6  # Run 6AM every mon-sat
+    # )
+
+    print("==== Start scheduler ====")
+    # Start the scheduler
+    # scheduler.start()
+
+    # Shut down the scheduler when exiting the app
+    # atexit.register(lambda: scheduler.shutdown())
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
