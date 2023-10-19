@@ -4,11 +4,20 @@ import datetime
 from sqlalchemy import text
 from resources.database import db
 import pytz
+import logging
+
+# import logging
+# import datetime
+# import pytz
+# set configuration values
 
 
 class Job:
     def __init__(self, ticker: str) -> None:
+        # log config
         tz_VN = pytz.timezone('Asia/Ho_Chi_Minh')
+        # logging.basicConfig(filename='job-{}.log'.format(datetime.datetime.now(tz=tz_VN).strftime('%Y-%m-%d %H:%M')), level=logging.DEBUG,
+        #                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
         date_now = datetime.datetime.now(tz_VN)
         date_now_fm = date_now.strftime('%Y-%m-%d')
         date_time_fm = date_now.strftime('%Y-%m-%d %H:%M')
@@ -26,7 +35,6 @@ class Job:
         if rs is not None:
             prev = rs['previousClose']
             current = rs['currentPrice']
-
             # check exist data here
             count = self.query.count(
                 ticker=self.ticker, current=current, previous=prev, date=self.date)
@@ -34,6 +42,8 @@ class Job:
             if count > 0:
                 return None
             else:
+                # logging.log(msg='Start scheduler configuration',
+                #             level=logging.WARNING)
                 self.query.create(ticker=self.ticker, current=current,
                                   previous=prev, date=self.date, date_time=self.date_time)
 
