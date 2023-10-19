@@ -14,9 +14,12 @@ from flask_mail import Mail
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
 import time
-
+from resources.helpers import Helpers
+import datetime
 
 # set configuration values
+
+
 class Config:
     SCHEDULER_API_ENABLED = True
 
@@ -74,18 +77,28 @@ def handle_request_parsing_error(err, req, schema, *, error_status_code, error_h
     abort(error_status_code, errors=err.messages)
 
 
+# date_now = datetime.datetime.now()
+# date_now_fm = date_now.strftime('%Y-%m-%d')
+# date_now_h = date_now.hour
+# print(date_now_h)
+
 scheduler = BackgroundScheduler()
 
 
 def my_cron_job():
     # Code to be executed by the cron job
     print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+    # hp = Helpers()
+
+    # rs = hp.get_ticker_daily("BLND")
+    # print(rs["previousClose"])
+    # print(rs["currentPrice"])
 
 
 # Schedule the cron job to run every 1mn
 scheduler.add_job(
     func=my_cron_job,
-    trigger="interval", seconds=60,
+    trigger="interval", seconds=60
 )
 
 # Start the scheduler
