@@ -87,15 +87,15 @@ with app.app_context():
     print("==== Add main jobs ====")
 
     # defined jobs
-    def job_delete_session():
-        print("========  Start delete session Job ========")
-        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
-        with app.app_context():
-            new_job = Job(ticker="BLND")
-            new_job.delete_sessions()
+    # def job_delete_session():
+    #     print("========  Start delete session Job ========")
+    #     print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+    #     with app.app_context():
+    #         new_job = Job(ticker="BLND")
+    #         new_job.delete_sessions()
 
-        print("========  End delete session Job ========")
-        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+    #     print("========  End delete session Job ========")
+    #     print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
 
     def job_pm():
         print("========  Start import data Job at PM ========")
@@ -132,10 +132,10 @@ with app.app_context():
     )
 
     # 6AM
-    scheduler.add_job(
-        func=job_delete_session,
-        trigger='cron', day_of_week='mon-sat', hour=6  # Run 6AM every mon-sat
-    )
+    # scheduler.add_job(
+    #     func=job_delete_session,
+    #     trigger='cron', day_of_week='mon-sat', hour=6  # Run 6AM every mon-sat
+    # )
 
     print("==== Start scheduler ====")
     # Start the scheduler
