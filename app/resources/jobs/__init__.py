@@ -63,20 +63,24 @@ class Job:
         yesterday = self.current_date + datetime.timedelta(days=-1)
         str_date = yesterday.strftime('%Y-%m-%d')  # format datetime yesterday
         rs = self.query.find_all_sessions_by_current_date(
-            ticker=self.ticker, date=str_date)
-        print(rs)
+            ticker=self.ticker, date=self.date)
         if len(rs) > 0:
             for index, item in enumerate(rs):
-                if (index + 1 > len(rs)):
-                    print("return")
-                    return
-                if item['current_price'] > 1.2:
+                first_item = rs[0]  # TODO: get first item
+                print(first_item['current_price'])
+                if index == 0:
+                    continue
+                if item['current_price'] > first_item['current_price']:
                     count_increase = count_increase + 1
                 else:
                     count_decrease = count_decrease + 1
 
         print("count increase {}".format(count_increase))
         print("count decrease {}".format(count_decrease))
-
-        self.report_query.create(
-            date=str_date, ticker="BLND", increase=count_increase, decrease=count_increase)
+        if count_decrease == 0 and count_increase == 0:
+            return
+        try:
+            self.report_query.create(
+                date=str_date, ticker="BLND", increase=count_increase, decrease=count_decrease)
+        except:
+            print("Unique")
