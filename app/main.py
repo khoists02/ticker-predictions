@@ -108,13 +108,12 @@ with app.app_context():
     # defined jobs
     # def job_delete_session():
     #     print("========  Start delete session Job ========")
-    #
+
     #     with app.app_context():
     #         new_job = Job(ticker="BLND")
     #         new_job.delete_sessions()
 
     #     print("========  End delete session Job ========")
-    #
 
     def job_pm():
         print("========  Start import data Job at PM ========")
@@ -148,7 +147,7 @@ with app.app_context():
         print("==== Tracking ====")
         print_date()
 
-    # 20-23 *5
+    # Import data 20-23 *5
     # Schedule the cron job to run every 5mn from 0AM - 23PM every working day
     scheduler.add_job(
         func=job_pm,
@@ -162,10 +161,10 @@ with app.app_context():
         trigger='cron', day_of_week='mon-sat', hour='0-5', minute='*/5'  # 0AM - 5AM
     )
 
-    # TODO: 7AM
+    # TODO: Report 6AM
     scheduler.add_job(
         func=job_report,
-        trigger='cron', day_of_week='mon-sat', hour=7
+        trigger='cron', day_of_week='mon-sat', hour=6
     )
 
     scheduler.add_job(
@@ -173,10 +172,10 @@ with app.app_context():
         trigger='cron', hour='*'
     )
 
-    # 6AM
+    # TODO: 7AM
     # scheduler.add_job(
     #     func=job_delete_session,
-    #     trigger='cron', day_of_week='mon-sat', hour=6  # Run 6AM every mon-sat
+    #     trigger='cron', day_of_week='mon-sat', hour=7  # Run 6AM every mon-sat
     # )
 
     print("==== Start scheduler ====")
@@ -187,9 +186,6 @@ with app.app_context():
 
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
-
-    # j = Job(ticker="BLND")
-    # j.count_sessions()
 
     # logging.log(msg='Start scheduler configuration', level=logging.INFO)
 if __name__ == '__main__':
