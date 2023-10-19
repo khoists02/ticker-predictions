@@ -152,10 +152,10 @@ with app.app_context():
 
     print("==== Start scheduler ====")
     # Start the scheduler
-    # scheduler.start()
+    scheduler.start()
 
     # Shut down the scheduler when exiting the app
-    # atexit.register(lambda: scheduler.shutdown())
+    atexit.register(lambda: scheduler.shutdown())
 
     # logging.log(msg='Start scheduler configuration', level=logging.INFO)
 
