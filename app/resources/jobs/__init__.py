@@ -1,11 +1,14 @@
 from resources.helpers import Helpers
 from resources.models.sessions import SessionsQuery
 from resources.models.report import ReportQuery
+from resources.models.notification import NotificationQuery
+from resources.api.settings import SettingQuery
 import datetime
 from sqlalchemy import text
 from resources.database import db
 import pytz
 import logging
+from resources.services.send_mail import SendMailStockService
 
 # import logging
 # import datetime
@@ -27,10 +30,12 @@ class Job:
         self.helper = Helpers()
         self.query = SessionsQuery()
         self.report_query = ReportQuery()
+        self.setting_qr = SettingQuery()
         self.ticker = ticker
         self.date = date_now_fm
         self.current_date = date_now.strptime(date_now_fm, '%Y-%m-%d')
         self.date_time = date_time_fm
+        self.notification_qr = NotificationQuery()
 
     def import_session_data(self) -> None:
         rs = self.helper.get_ticker_daily(ticker=self.ticker)
@@ -49,6 +54,25 @@ class Job:
                 try:
                     self.query.create(ticker=self.ticker, current=current,
                                       previous=prev, date=self.date, date_time=self.date_time)
+                    setting = self.setting_qr.findByTicker(ticker="BLND")
+                    print("Price Should Buy {}".format(setting['priceIn']))
+
+                    if setting['priceIn'] > current:
+                        print("Send notification and email !!!")
+                        body = {
+                            'per': ((current - prev) / current) * 100,
+                            'read': False,
+                            'ticker': 'BLND',
+                            'updatedAt': self.date,
+                            'close': current,
+                        }
+                        self.notification_qr.createOne(body=body)
+                        email_service = SendMailStockService()
+                        txt = 'increase' if float(
+                            body['per']) > 0 else 'decrease'
+                        email_service.send_email(
+                            txt=txt,
+                            username='khoi.le', link='http://localhost:3002/histories/BLND', ticker=body['ticker'], per=body['per'], close=body['close'], updatedAt=body['updatedAt'])
                 except:
                     print("Unique")
 
@@ -88,20 +112,19 @@ class Job:
         except:
             print("Unique")
 
-    def count_sessions_compare_prev(self):
+    def count_sessions_today(self):
         count_increase = 0
         count_decrease = 0
-        rs = self.helper.get_ticker_daily(ticker=self.ticker)
-        prev = rs['previousClose']
-        yesterday = self.current_date + datetime.timedelta(days=-1)
-        str_date = yesterday.strftime('%Y-%m-%d')  # format datetime yesterday
         rs = self.query.find_all_sessions_by_current_date(
-            ticker=self.ticker, date=str_date)
+            ticker=self.ticker, date=self.date)
         if len(rs) > 0:
             for index, item in enumerate(rs):
-                if item['current_price'] > prev:
+                first_item = rs[0]  # TODO: get first item
+                if index == 0:
+                    continue
+                if item['current_price'] > first_item['current_price']:
                     count_increase = count_increase + 1
-                elif item['current_price'] == prev:
+                elif item['current_price'] == first_item['current_price']:
                     print("Equal")
                 else:
                     count_decrease = count_decrease + 1
@@ -112,6 +135,6 @@ class Job:
             return
         try:
             self.report_query.create(
-                date=str_date, ticker="BLND", increase=count_increase, decrease=count_decrease)
+                date=self.date, ticker="BLND", increase=count_increase, decrease=count_decrease)
         except:
             print("Unique")

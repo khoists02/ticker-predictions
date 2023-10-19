@@ -145,6 +145,15 @@ with app.app_context():
 
         print("========  End report Job ========")
 
+    def job_report_today():
+        print("========  Start report today Job ========")
+        print_date()
+        with app.app_context():
+            new_job = Job(ticker="BLND")
+            new_job.count_sessions_today()
+
+        print("========  End report today Job ========")
+
     def job_tracking():
         print("==== Tracking ====")
         print_date()
@@ -163,10 +172,16 @@ with app.app_context():
         trigger='cron', day_of_week='mon-sat', hour='0-5', minute='*/5'  # 0AM - 5AM
     )
 
-    # TODO: Report 6AM
+    # TODO: Report today 6AM
     scheduler.add_job(
         func=job_report,
         trigger='cron', day_of_week='mon-sat', hour=6
+    )
+
+    # TODO: Report Today at 6:30AM
+    scheduler.add_job(
+        func=job_report_today,
+        trigger='cron', day_of_week='mon-sat', hour=6, minute=30
     )
 
     scheduler.add_job(
