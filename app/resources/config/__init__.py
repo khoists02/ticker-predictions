@@ -25,3 +25,4 @@ class AppConfig(object):
     RABBITMQ_EXCHANGE = environ.get("RABBITMQ_EXCHANGE")
     RABBITMQ_ROUTINGKEY = environ.get("RABBITMQ_ROUTINGKEY")
     THREADS = environ.get("THREADS")
+    PORT = environ.get("PORT")
