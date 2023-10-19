@@ -32,6 +32,14 @@ class SessionsQuery:
     def __init__(self) -> None:
         pass
 
+    def find_all_sessions_by_current_date(self, ticker, date):
+        rs = db.session.query(Sessions) \
+            .filter(
+                Sessions.ticker == ticker,
+                Sessions.date == date
+        )
+        return [i.serialize for i in rs]
+
     def count(self, ticker, current, previous, date) -> int:
         rs = db.session.query(Sessions) \
             .filter(

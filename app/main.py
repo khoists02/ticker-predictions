@@ -130,6 +130,16 @@ with app.app_context():
         print("========  End import data Job at AM ========")
         print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
 
+    def job_report():
+        print("========  Start report Job ========")
+        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+        with app.app_context():
+            new_job = Job(ticker="BLND")
+            new_job.count_sessions()
+
+        print("========  End report Job ========")
+        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+
     # 20-23 *5
     # Schedule the cron job to run every 5mn from 0AM - 23PM every working day
     scheduler.add_job(
@@ -142,6 +152,12 @@ with app.app_context():
     scheduler.add_job(
         func=job_am,
         trigger='cron', day_of_week='mon-sat', hour='0-5', minute='*/5'  # 0AM - 5AM
+    )
+
+    # TODO: 7AM
+    scheduler.add_job(
+        func=job_report,
+        trigger='cron', day_of_week='mon-sat', hour=7
     )
 
     # 6AM

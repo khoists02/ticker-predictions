@@ -1,5 +1,6 @@
 from resources.helpers import Helpers
 from resources.models.sessions import SessionsQuery
+from resources.models.report import ReportQuery
 import datetime
 from sqlalchemy import text
 from resources.database import db
@@ -25,8 +26,10 @@ class Job:
         # 2023-10-19 01:41
         self.helper = Helpers()
         self.query = SessionsQuery()
+        self.report_query = ReportQuery()
         self.ticker = ticker
         self.date = date_now_fm
+        self.current_date = date_now.strptime(date_now_fm, '%Y-%m-%d')
         self.date_time = date_time_fm
 
     def import_session_data(self) -> None:
@@ -49,3 +52,31 @@ class Job:
 
     def delete_sessions(self) -> None:
         self.query.delete_sessions(ticker=self.ticker, date=self.date)
+
+    """
+        find all data from yesterday
+    """
+
+    def count_sessions(self):
+        count_increase = 0
+        count_decrease = 0
+        yesterday = self.current_date + datetime.timedelta(days=-1)
+        str_date = yesterday.strftime('%Y-%m-%d')  # format datetime yesterday
+        rs = self.query.find_all_sessions_by_current_date(
+            ticker=self.ticker, date=str_date)
+        print(rs)
+        if len(rs) > 0:
+            for index, item in enumerate(rs):
+                if (index + 1 > len(rs)):
+                    print("return")
+                    return
+                if item['current_price'] > 1.2:
+                    count_increase = count_increase + 1
+                else:
+                    count_decrease = count_decrease + 1
+
+        print("count increase {}".format(count_increase))
+        print("count decrease {}".format(count_decrease))
+
+        self.report_query.create(
+            date=str_date, ticker="BLND", increase=count_increase, decrease=count_increase)
