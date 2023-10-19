@@ -1,6 +1,8 @@
 from resources.helpers import Helpers
 from resources.models.sessions import SessionsQuery
 import datetime
+from sqlalchemy import text
+from resources.database import db
 
 
 class Job:
