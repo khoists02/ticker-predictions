@@ -16,11 +16,11 @@ import atexit
 import time
 from resources.jobs import Job
 # import logging
-# import datetime
-# import pytz
+import datetime
+import pytz
 # set configuration values
 
-# VN_TZ = pytz.timezone("Asia/Ho_Chi_Minh")
+VN_TZ = pytz.timezone("Asia/Ho_Chi_Minh")
 
 
 class Config:
@@ -91,15 +91,14 @@ with app.app_context():
 
     scheduler = BackgroundScheduler()
 
+    scheduler.configure(timezone=VN_TZ)
+
     print("==== Add job store ====")
-    scheduler.add_jobstore('sqlalchemy', engine=db.engine)
+    # scheduler.add_jobstore('sqlalchemy', engine=db.engine)
 
     print("==== Add main jobs ====")
 
     # defined jobs
-    def log_data():
-        pass
-
     # def job_delete_session():
     #     print("========  Start delete session Job ========")
     #     print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
@@ -140,6 +139,10 @@ with app.app_context():
         print("========  End report Job ========")
         print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
 
+    def job_tracking():
+        print("==== Tracking ====")
+        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+
     # 20-23 *5
     # Schedule the cron job to run every 5mn from 0AM - 23PM every working day
     scheduler.add_job(
@@ -160,6 +163,11 @@ with app.app_context():
         trigger='cron', day_of_week='mon-sat', hour=7
     )
 
+    scheduler.add_job(
+        func=job_tracking,
+        trigger='cron', hour='*'
+    )
+
     # 6AM
     # scheduler.add_job(
     #     func=job_delete_session,
@@ -170,6 +178,8 @@ with app.app_context():
     # Start the scheduler
     scheduler.start()
 
+    print(scheduler.timezone)
+
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
 
@@ -177,6 +187,6 @@ with app.app_context():
     # j.count_sessions()
 
     # logging.log(msg='Start scheduler configuration', level=logging.INFO)
-
+print("helper")
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

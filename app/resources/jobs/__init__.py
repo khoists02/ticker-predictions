@@ -41,7 +41,6 @@ class Job:
             # check exist data here
             count = self.query.count(
                 ticker=self.ticker, current=current, previous=prev, date=self.date)
-            print(count)
             if count > 0:
                 return None
             else:
