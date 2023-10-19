@@ -47,8 +47,11 @@ class Job:
             else:
                 # logging.log(msg='Start scheduler configuration',
                 #             level=logging.WARNING)
-                self.query.create(ticker=self.ticker, current=current,
-                                  previous=prev, date=self.date, date_time=self.date_time)
+                try:
+                    self.query.create(ticker=self.ticker, current=current,
+                                      previous=prev, date=self.date, date_time=self.date_time)
+                except:
+                    print("Unique")
 
     def delete_sessions(self) -> None:
         self.query.delete_sessions(ticker=self.ticker, date=self.date)
@@ -63,15 +66,16 @@ class Job:
         yesterday = self.current_date + datetime.timedelta(days=-1)
         str_date = yesterday.strftime('%Y-%m-%d')  # format datetime yesterday
         rs = self.query.find_all_sessions_by_current_date(
-            ticker=self.ticker, date=self.date)
+            ticker=self.ticker, date=str_date)
         if len(rs) > 0:
             for index, item in enumerate(rs):
                 first_item = rs[0]  # TODO: get first item
-                print(first_item['current_price'])
                 if index == 0:
                     continue
                 if item['current_price'] > first_item['current_price']:
                     count_increase = count_increase + 1
+                elif item['current_price'] == first_item['current_price']:
+                    print("Equal")
                 else:
                     count_decrease = count_decrease + 1
 
