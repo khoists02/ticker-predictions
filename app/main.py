@@ -13,9 +13,7 @@ from flask_cors import CORS
 from flask_mail import Mail
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
-import time
 from resources.jobs import Job
-# import logging
 import datetime
 import pytz
 # set configuration values
