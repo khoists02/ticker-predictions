@@ -3,6 +3,7 @@ from flask_restful import Api, abort
 from resources.api.predicts import StockData, StockInfo, StockCashFlowSheet, StockDataDaily, StockBalanceSheet, StockRecommendations
 from resources.api.bidasks import BidAskController
 from resources.api.tickers_account import TickersAccount, TickerSettings
+from resources.api.prediction_history import TickerEarningDates
 from resources.api.favorite_controller import FavoriteController
 from resources.api.notification_controller import NotificationController, NotificationDetails, NotificationCount
 from webargs.flaskparser import parser
@@ -14,7 +15,7 @@ appConfig = AppConfig()
 app = Flask(__name__, template_folder='templates')
 mail_app = Mail(app=app)
 
-origins = ["https://localhost:3000",
+origins = ["https://localhost:3000", "http://localhost:3002",
            "http://localhost:3000", "https://volvo.local:3000"]
 
 CORS(app, origins=origins, allow_headers=[
@@ -48,6 +49,7 @@ api.add_resource(StockInfo, '/api/v1/info')
 api.add_resource(TickerSettings, '/api/v1/settings')
 api.add_resource(FavoriteController, '/api/v1/favorites')
 api.add_resource(BidAskController, '/api/v1/bidasks')
+api.add_resource(TickerEarningDates, '/api/v1/earningdates')
 
 # Notification
 api.add_resource(NotificationController, '/api/v1/notifications')

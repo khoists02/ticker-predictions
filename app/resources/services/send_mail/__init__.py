@@ -11,7 +11,6 @@ class SendMailStockService:
         subject = 'Stock Notification Alert! {}'.format(ticker)
         msg = Message(subject=subject,
                       sender='stockapplication@gmail.com', recipients=['khoile@gmail.com'])
-        # msg.body = "Hey Paul, sending you this email from my Flask app, lmk if it works"
         msg.html = render_template(
             'notification.html', txt=txt, username=username, link=link, ticker=ticker, per=per, close=close, updatedAt=updatedAt)
         self.mail.send(message=msg)

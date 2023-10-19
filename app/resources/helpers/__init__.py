@@ -141,6 +141,10 @@ class Helpers:
         ticker_rs = yf.Ticker(ticker=ticker)
         return ticker_rs.get_cash_flow(freq=freq).to_json()
 
+    def get_earning_dates(self, ticker: str):
+        ticker_rs = yf.Ticker(ticker=ticker)
+        return ticker_rs.get_earnings_dates().to_json()
+
     def get_recommendations(self, ticker):
         ticker_rs = yf.Ticker(ticker=ticker)
         return ticker_rs.get_news()
