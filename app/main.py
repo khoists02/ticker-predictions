@@ -15,12 +15,12 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
 import time
 from resources.jobs import Job
-import logging
-import datetime
-import pytz
+# import logging
+# import datetime
+# import pytz
 # set configuration values
 
-VN_TZ = pytz.timezone("Asia/Ho_Chi_Minh")
+# VN_TZ = pytz.timezone("Asia/Ho_Chi_Minh")
 
 
 class Config:
@@ -31,8 +31,8 @@ appConfig = AppConfig()
 app = Flask(__name__, template_folder='templates')
 
 # log config
-logging.basicConfig(filename='record-{}.log'.format(datetime.datetime.now(tz=VN_TZ).strftime('%Y-%m-%d %H:%M')), level=logging.DEBUG,
-                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+# logging.basicConfig(filename='record-{}.log'.format(datetime.datetime.now(tz=VN_TZ).strftime('%Y-%m-%d %H:%M')), level=logging.DEBUG,
+#                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 mail_app = Mail(app=app)
 
@@ -157,7 +157,7 @@ with app.app_context():
     # Shut down the scheduler when exiting the app
     # atexit.register(lambda: scheduler.shutdown())
 
-    logging.log(msg='Start scheduler configuration', level=logging.INFO)
+    # logging.log(msg='Start scheduler configuration', level=logging.INFO)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
