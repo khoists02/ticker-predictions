@@ -3,13 +3,15 @@ from resources.models.sessions import SessionsQuery
 import datetime
 from sqlalchemy import text
 from resources.database import db
+import pytz
 
 
 class Job:
     def __init__(self, ticker: str) -> None:
-        date_now = datetime.datetime.now()
+        tz_VN = pytz.timezone('Asia/Ho_Chi_Minh')
+        date_now = datetime.datetime.now(tz_VN)
         date_now_fm = date_now.strftime('%Y-%m-%d')
-        date_time_fm = date_now.strftime('%Y-%m-%d %I:%M')
+        date_time_fm = date_now.strftime('%Y-%m-%d %H:%M')
         # 2023-10-19
         # 2023-10-19 01:41
         self.helper = Helpers()
