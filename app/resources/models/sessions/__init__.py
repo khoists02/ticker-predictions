@@ -61,3 +61,15 @@ class SessionsQuery:
             for session in rs:
                 db.session.delete(session)
                 db.session.commit()
+
+    def ids_distance(self) -> None:
+        rs = db.session.query(Sessions) \
+            .distinct(
+                Sessions.ticker,
+                Sessions.date,
+                Sessions.date_time,
+                Sessions.current_price,
+                Sessions.previous_price,
+        )
+
+        return [i.serialize for i in rs]

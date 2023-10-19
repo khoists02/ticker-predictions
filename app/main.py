@@ -14,11 +14,7 @@ from flask_mail import Mail
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
 import time
-from resources.helpers import Helpers
 from resources.jobs import Job
-# from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
-# from apscheduler.jobstores.sqlalchemy
-
 # set configuration values
 
 
@@ -96,7 +92,7 @@ with app.app_context():
         print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
         with app.app_context():
             new_job = Job(ticker="BLND")
-            new_job.job_delete_session()
+            new_job.delete_sessions()
 
         print("========  End delete session Job ========")
         print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
