@@ -11,6 +11,16 @@ from resources.database import db
 from resources.config import AppConfig
 from flask_cors import CORS
 from flask_mail import Mail
+from apscheduler.schedulers.background import BackgroundScheduler
+import atexit
+import time
+
+
+# set configuration values
+class Config:
+    SCHEDULER_API_ENABLED = True
+
+
 appConfig = AppConfig()
 app = Flask(__name__, template_folder='templates')
 mail_app = Mail(app=app)
@@ -28,7 +38,7 @@ app.config['MAIL_PASSWORD'] = 'b82e5a6b2d862e'
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = appConfig.SQLALCHEMY_DATABASE_URI
-print(appConfig.SQLALCHEMY_DATABASE_URI)
+app.config["SCHEDULER_API_ENABLED"] = True
 mail_app = Mail(app=app)
 mail = mail_app
 api = Api(app)
@@ -63,6 +73,26 @@ api.add_resource(NotificationDetails,
 def handle_request_parsing_error(err, req, schema, *, error_status_code, error_headers):
     abort(error_status_code, errors=err.messages)
 
+
+scheduler = BackgroundScheduler()
+
+
+def my_cron_job():
+    # Code to be executed by the cron job
+    print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+
+
+# Schedule the cron job to run every 1mn
+scheduler.add_job(
+    func=my_cron_job,
+    trigger="interval", seconds=60,
+)
+
+# Start the scheduler
+scheduler.start()
+
+# Shut down the scheduler when exiting the app
+atexit.register(lambda: scheduler.shutdown())
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

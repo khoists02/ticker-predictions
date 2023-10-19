@@ -19,3 +19,4 @@ mailtrap==2.0.1
 # uwsgidecorators==1.1.0
 # uwsgi==2.0.22
 # pyuwsgi==2.0.22
+apscheduler==3.10.4
