@@ -16,3 +16,6 @@ webargs==8.3.0
 yfinance==0.2.26
 Flask-Mail==0.9.1
 mailtrap==2.0.1
+# uwsgidecorators==1.1.0
+# uwsgi==2.0.22
+# pyuwsgi==2.0.22
