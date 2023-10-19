@@ -83,6 +83,13 @@ def handle_request_parsing_error(err, req, schema, *, error_status_code, error_h
     abort(error_status_code, errors=err.messages)
 
 
+def print_date():
+    date_now = datetime.datetime.now(VN_TZ)
+    date_time_fm = date_now.strftime('%Y-%m-%d %H:%M')
+
+    print(date_time_fm)
+
+
 with app.app_context():
     print("======= Database start... ======")
     # Database Config
@@ -101,47 +108,45 @@ with app.app_context():
     # defined jobs
     # def job_delete_session():
     #     print("========  Start delete session Job ========")
-    #     print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+    #
     #     with app.app_context():
     #         new_job = Job(ticker="BLND")
     #         new_job.delete_sessions()
 
     #     print("========  End delete session Job ========")
-    #     print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+    #
 
     def job_pm():
         print("========  Start import data Job at PM ========")
-        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+        print_date()
         with app.app_context():
             new_job = Job(ticker="BLND")
             new_job.import_session_data()
 
         print("========  End import data Job at PM ========")
-        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
 
     def job_am():
+
         print("========  Start import data Job at AM ========")
-        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+        print_date()
         with app.app_context():
             new_job = Job(ticker="BLND")
             new_job.import_session_data()
 
         print("========  End import data Job at AM ========")
-        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
 
     def job_report():
         print("========  Start report Job ========")
-        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+        print_date()
         with app.app_context():
             new_job = Job(ticker="BLND")
             new_job.count_sessions()
 
         print("========  End report Job ========")
-        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
 
     def job_tracking():
         print("==== Tracking ====")
-        print(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+        print_date()
 
     # 20-23 *5
     # Schedule the cron job to run every 5mn from 0AM - 23PM every working day
@@ -178,7 +183,7 @@ with app.app_context():
     # Start the scheduler
     scheduler.start()
 
-    print(scheduler.timezone)
+    print("Scheduled time zone {}".format(scheduler.timezone))
 
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
@@ -187,6 +192,5 @@ with app.app_context():
     # j.count_sessions()
 
     # logging.log(msg='Start scheduler configuration', level=logging.INFO)
-print("helper")
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
