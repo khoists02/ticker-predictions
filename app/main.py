@@ -175,13 +175,13 @@ with app.app_context():
     # TODO: Report today 6AM
     scheduler.add_job(
         func=job_report,
-        trigger='cron', day_of_week='mon-sat', hour=6
+        trigger='cron', day_of_week='mon-sat', hour=7
     )
 
     # TODO: Report Today at 6:30AM
     scheduler.add_job(
         func=job_report_today,
-        trigger='cron', day_of_week='mon-sat', hour=6, minute=30
+        trigger='cron', day_of_week='mon-sat', hour=8
     )
 
     scheduler.add_job(

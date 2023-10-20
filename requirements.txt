@@ -13,7 +13,7 @@ python-dotenv==1.0.0
 yahoo-fin==0.8.9.1
 webargs==8.3.0
 # matplotlib==3.7.2s
-yfinance==0.2.26
+yfinance==0.2.31
 Flask-Mail==0.9.1
 mailtrap==2.0.1
 # uwsgidecorators==1.1.0
