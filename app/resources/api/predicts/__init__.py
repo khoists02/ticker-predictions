@@ -1,17 +1,14 @@
 from flask_restful import Resource
 from flask import abort
-import numpy as np
-import random
-# import tensorflow as tf
-import time
 import json
 from resources.helpers import Helpers
 from webargs import fields
 from webargs.flaskparser import use_kwargs
+# from yfinance import AssertionError
 # from resources.services.predict import PredictService
-from resources.services.filters import FilterService
-from resources.models.filters import Filters
-from resources.models.predictions_history import PredictionsHistory, PredictionsHistoryQuery
+# from resources.services.filters import FilterService
+# from resources.models.filters import Filters
+# from resources.models.predictions_history import PredictionsHistory, PredictionsHistoryQuery
 
 
 # class Predict(Resource):

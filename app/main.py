@@ -7,6 +7,7 @@ from resources.api.prediction_history import TickerEarningDates
 from resources.api.favorite_controller import FavoriteController
 from resources.api.notification_controller import NotificationController, NotificationDetails, NotificationCount
 from resources.api.report import ReportController, ReportByDateController
+from resources.api.tickers import TickerFastInfoController
 from webargs.flaskparser import parser
 from resources.database import db
 from resources.config import AppConfig
@@ -78,6 +79,9 @@ api.add_resource(NotificationDetails,
 api.add_resource(ReportController, '/api/v1/report')
 api.add_resource(ReportByDateController, '/api/v1/reportfilter')
 # api.add_resource(StockData, '/api/v1/balancesheet')
+
+# Tickers Info
+api.add_resource(TickerFastInfoController, '/api/v1/short')
 
 
 @parser.error_handler
@@ -172,13 +176,13 @@ with app.app_context():
         trigger='cron', day_of_week='mon-sat', hour='0-5', minute='*/5'  # 0AM - 5AM
     )
 
-    # TODO: Report today 6AM
+    # TODO: Report today 7AM
     scheduler.add_job(
         func=job_report,
         trigger='cron', day_of_week='mon-sat', hour=7
     )
 
-    # TODO: Report Today at 6:30AM
+    # TODO: Report Today at 8AM
     scheduler.add_job(
         func=job_report_today,
         trigger='cron', day_of_week='mon-sat', hour=8
@@ -203,6 +207,10 @@ with app.app_context():
 
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
+
+    # TODO: Run manually
+    # new_job = Job(ticker="BLND")
+    # new_job.count_sessions_today()
 
     # logging.log(msg='Start scheduler configuration', level=logging.INFO)
 if __name__ == '__main__':

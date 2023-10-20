@@ -4,6 +4,7 @@ from webargs import fields
 from webargs.flaskparser import use_kwargs, use_args
 from resources.models.favorite import Favorite, FavoriteQuery
 from resources.helpers import Helpers
+import json
 
 
 class FavoriteController(Resource):
@@ -28,8 +29,20 @@ class FavoriteController(Resource):
         rs = []
 
         for idx, ticker in enumerate(symbol_list):
-            item = self.helper.get_ticker_daily(ticker=ticker)
+
+            # TODO: // will get_daily_info instead when developers fixed
+            item = json.loads(self.helper.get_ticker_fast_info(ticker=ticker))
             item['url_icon'] = url_list[idx]
+            item['currentPrice'] = item['lastPrice']
+            item['volume'] = item['lastVolume']
+            item['bid'] = 0
+            item['bidSize'] = 0
+            item['ask'] = 0
+            item['askSize'] = 0
+            item['symbol'] = ticker
+            item['shortName'] = "BLND Labs."
+            item['industryDisp'] = "Computer"
+            item['recommendationKey'] = None
             rs.append(item)
 
         return {

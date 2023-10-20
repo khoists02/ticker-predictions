@@ -20,8 +20,8 @@ class Report(db.Model):
         return {
             'id': str(self.id),
             'ticker': self.ticker,
-            'increase': self.current_price,
-            'decrease': self.previous_price,
+            'increase': self.increase,
+            'decrease': self.decrease,
             'date': self.date,
         }
 

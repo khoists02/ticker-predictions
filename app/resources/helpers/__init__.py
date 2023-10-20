@@ -7,7 +7,7 @@ import pandas as pd
 from collections import deque
 import yfinance as yf
 from datetime import date
-
+import json
 # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
 
 
@@ -156,7 +156,13 @@ class Helpers:
 
     def get_ticker_daily(self, ticker):
         ticker_rs = yf.Ticker(ticker=ticker)
-        return ticker_rs.get_info()
+        rs = ticker_rs.get_info()
+        print(rs)
+        return []
+
+    def get_ticker_fast_info(self, ticker):
+        ticker_rs = si.Ticker(ticker=ticker)
+        return ticker_rs.get_fast_info().toJSON()
 
     def load_stock_by_day(self, ticker, start, end, interval):
         ticker_rs = yf.Ticker(ticker=ticker)
