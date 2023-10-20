@@ -157,8 +157,7 @@ class Helpers:
     def get_ticker_daily(self, ticker):
         ticker_rs = yf.Ticker(ticker=ticker)
         rs = ticker_rs.get_info()
-        print(rs)
-        return []
+        return rs
 
     def get_ticker_fast_info(self, ticker):
         ticker_rs = si.Ticker(ticker=ticker)

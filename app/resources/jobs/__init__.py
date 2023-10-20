@@ -38,7 +38,7 @@ class Job:
         self.notification_qr = NotificationQuery()
 
     def import_session_data(self) -> None:
-        rs = self.helper.get_ticker_daily(ticker=self.ticker)
+        rs = self.helper.get_ticker_fast_info(ticker=self.ticker)
 
         if rs is not None:
             prev = rs['previousClose']
