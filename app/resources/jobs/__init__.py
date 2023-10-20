@@ -38,6 +38,7 @@ class Job:
         self.notification_qr = NotificationQuery()
 
     def import_session_data(self) -> None:
+        # TODO: replace when ticker info back
         rs = self.helper.get_ticker_fast_info(ticker=self.ticker)
 
         if rs is not None:
