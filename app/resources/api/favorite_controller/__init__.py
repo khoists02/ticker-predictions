@@ -43,6 +43,7 @@ class FavoriteController(Resource):
             item['shortName'] = ticker
             item['industryDisp'] = "Computer"
             item['recommendationKey'] = None
+            item['previousClose'] = item['regularMarketPreviousClose']
             rs.append(item)
 
         return {

@@ -27,6 +27,9 @@ class TickersAccount(Resource):
         'balance': fields.Float(
             required=True,
         ),
+        'ticker': fields.String(
+            required=True,
+        ),
         'count': fields.Float(
             required=True,
         ),
@@ -63,7 +66,7 @@ class TickersAccount(Resource):
     def put(self, body):
         qr = SettingQuery()
         qr.updateSetting(
-            id=body["id"], balance=body["balance"], current=body["current"], count=body["count"], priceIn=body["priceIn"], priceOut=body["priceOut"])
+            id=body["id"], balance=body["balance"], ticker=body["ticker"], current=body["current"], count=body["count"], priceIn=body["priceIn"], priceOut=body["priceOut"])
         return {
             "message": "ok",
         }, 201

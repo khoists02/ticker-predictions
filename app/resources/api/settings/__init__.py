@@ -17,10 +17,11 @@ class SettingQuery:
         return db.session.query(Settings).filter(
             Settings.ticker == ticker).first()
 
-    def updateSetting(self, id, balance, current, count, priceIn, priceOut) -> None:
+    def updateSetting(self, id, ticker, balance, current, count, priceIn, priceOut) -> None:
         st: Settings = db.session.query(Settings).filter(
             Settings.id == id).first()
         st.balance = balance
+        st.ticker = ticker
         st.current = current
         st.count = count
         st.price_in = priceIn
