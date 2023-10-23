@@ -25,8 +25,9 @@ class TickerFastInfoController(Resource):
     @use_kwargs(args, location='query')
     def get(self, ticker: str):
         rs = json.loads(self.helper.get_ticker_fast_info(ticker=ticker))
-        print(rs['lastPrice'])
+        # print(rs['lastPrice'])
         rs['currentPrice'] = rs['lastPrice']
+        rs['previousClose'] = rs['regularMarketPreviousClose']
         rs['volume'] = rs['lastVolume']
         rs['bid'] = 0
         rs['bidSize'] = 0

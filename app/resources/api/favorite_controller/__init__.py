@@ -40,7 +40,7 @@ class FavoriteController(Resource):
             item['ask'] = 0
             item['askSize'] = 0
             item['symbol'] = ticker
-            item['shortName'] = "BLND Labs."
+            item['shortName'] = ticker
             item['industryDisp'] = "Computer"
             item['recommendationKey'] = None
             rs.append(item)

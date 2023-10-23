@@ -7,7 +7,7 @@ import datetime
 from sqlalchemy import text
 from resources.database import db
 import pytz
-import logging
+import json
 from resources.services.send_mail import SendMailStockService
 
 # import logging
@@ -39,11 +39,14 @@ class Job:
 
     def import_session_data(self) -> None:
         # TODO: replace when ticker info back
-        rs = self.helper.get_ticker_fast_info(ticker=self.ticker)
+        rs = json.loads(self.helper.get_ticker_fast_info(ticker=self.ticker))
 
         if rs is not None:
-            prev = rs['previousClose']
-            current = rs['currentPrice']
+            prev = rs['regularMarketPreviousClose']
+            current = rs['lastPrice']
+
+            # rs['currentPrice'] = rs['lastPrice']
+            # rs['previousClose'] = rs['regularMarketPreviousClose']
             # check exist data here
             count = self.query.count(
                 ticker=self.ticker, current=current, previous=prev, date=self.date)

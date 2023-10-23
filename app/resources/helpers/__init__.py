@@ -160,7 +160,7 @@ class Helpers:
         return rs
 
     def get_ticker_fast_info(self, ticker):
-        ticker_rs = si.Ticker(ticker=ticker)
+        ticker_rs = yf.Ticker(ticker=ticker)
         return ticker_rs.get_fast_info().toJSON()
 
     def load_stock_by_day(self, ticker, start, end, interval):
