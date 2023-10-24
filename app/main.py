@@ -4,7 +4,7 @@ from resources.api.predicts import StockData, StockInfo, StockCashFlowSheet, Sto
 from resources.api.bidasks import BidAskController
 from resources.api.tickers_account import TickersAccount, TickerSettings
 from resources.api.prediction_history import TickerEarningDates
-from resources.api.favorite_controller import FavoriteController
+from resources.api.favorite_controller import FavoriteController, FavoriteAdd
 from resources.api.notification_controller import NotificationController, NotificationDetails, NotificationCount
 from resources.api.report import ReportController, ReportByDateController
 from resources.api.tickers import TickerFastInfoController
@@ -67,6 +67,7 @@ api.add_resource(TickersAccount, '/api/v1/account')
 api.add_resource(StockInfo, '/api/v1/info')
 api.add_resource(TickerSettings, '/api/v1/settings')
 api.add_resource(FavoriteController, '/api/v1/favorites')
+api.add_resource(FavoriteAdd, '/api/v1/favorites')
 api.add_resource(BidAskController, '/api/v1/bidasks')
 api.add_resource(TickerEarningDates, '/api/v1/earningdates')
 

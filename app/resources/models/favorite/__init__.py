@@ -34,3 +34,16 @@ class FavoriteQuery:
             .filter(Favorite.ticker == ticker)
         print(rs)
         return rs
+
+    def addNew(self, ticker):
+        data = Favorite(ticker="BLND", symbol=ticker,
+                        url_icon="https://google.com")
+        db.session.add(data)
+        db.session.commit()
+
+    def delete(self, id: str):
+        rs: Favorite = db.session.query(Favorite) \
+            .filter(Favorite.id == id).first()
+        db.session.delete(rs)
+
+        db.session.commit()
