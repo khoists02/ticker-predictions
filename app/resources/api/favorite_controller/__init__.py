@@ -1,3 +1,4 @@
+import math
 from flask_restful import Resource
 from flask import abort, json
 from webargs import fields
@@ -54,7 +55,8 @@ class FavoriteController(Resource):
             item = json.loads(self.helper.get_ticker_fast_info(ticker=ticker))
             item["uuid"] = ids[idx]
             item['url_icon'] = url_list[idx]
-            item['currentPrice'] = item['lastPrice']
+            item['currentPrice'] = item['lastPrice'] if item['lastPrice'] is not math.isnan(
+                item['lastPrice']) else 0
             item['volume'] = item['lastVolume']
             item['bid'] = 0
             item['bidSize'] = 0
@@ -64,7 +66,8 @@ class FavoriteController(Resource):
             item['shortName'] = ticker
             item['industryDisp'] = "Computer"
             item['recommendationKey'] = None
-            item['previousClose'] = item['regularMarketPreviousClose'] if item['regularMarketPreviousClose'] is not None else 0
+            item['previousClose'] = item['regularMarketPreviousClose'] if item['regularMarketPreviousClose'] is not math.isnan(
+                item['regularMarketPreviousClose']) else 0
             rs.append(item)
         return {
             'content': rs
