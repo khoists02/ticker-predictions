@@ -10,6 +10,8 @@ class Settings(db.Model):
     count = Column(Float, nullable=False)
     price_in = Column(Float, nullable=False, default=0)
     price_out = Column(Float, nullable=False, default=0)
+    # previous_close = Column(Float, nullable=False, default=0)
+    # prev_updated_time = Column(String, nullable=False)
 
 
 class SettingQuery:

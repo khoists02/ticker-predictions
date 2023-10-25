@@ -27,4 +27,4 @@ class TickerEarningDates(Resource):
     @use_kwargs(args, location='query')
     def get(self, ticker):  # Find all
         helper = Helpers()
-        return json.loads(helper.get_earning_dates(ticker=ticker)), 200
+        return helper.get_earning_dates(ticker=ticker), 200

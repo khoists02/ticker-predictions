@@ -145,7 +145,7 @@ class Helpers:
 
     def get_earning_dates(self, ticker: str):
         ticker_rs = yf.Ticker(ticker=ticker)
-        return ticker_rs.get_earnings_dates().to_json()
+        return ticker_rs.get_earnings_dates().to_json(orient='records')
 
     def get_recommendations(self, ticker):
         ticker_rs = yf.Ticker(ticker=ticker)
