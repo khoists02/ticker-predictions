@@ -55,8 +55,8 @@ class FavoriteController(Resource):
             item = json.loads(self.helper.get_ticker_fast_info(ticker=ticker))
             item["uuid"] = ids[idx]
             item['url_icon'] = url_list[idx]
-            item['currentPrice'] = item['lastPrice'] if item['lastPrice'] is not math.isnan(
-                item['lastPrice']) else 0
+            item['currentPrice'] = item['lastPrice'] if math.isnan(
+                item['lastPrice']) is False else 0
             item['volume'] = item['lastVolume']
             item['bid'] = 0
             item['bidSize'] = 0
@@ -66,8 +66,8 @@ class FavoriteController(Resource):
             item['shortName'] = ticker
             item['industryDisp'] = "Computer"
             item['recommendationKey'] = None
-            item['previousClose'] = item['regularMarketPreviousClose'] if item['regularMarketPreviousClose'] is not math.isnan(
-                item['regularMarketPreviousClose']) else 0
+            item['previousClose'] = item['regularMarketPreviousClose'] if math.isnan(
+                item['regularMarketPreviousClose']) is False else 0
             rs.append(item)
         return {
             'content': rs

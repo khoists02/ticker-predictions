@@ -52,6 +52,12 @@ class BidAskQuery:
 
         return len(list(rs))
 
+    def findById(self, id: str):
+        rs = db.session.query(BidAsk) \
+            .filter(BidAsk.id == id).first()
+
+        return rs.serialize
+
     def create(self, ticker, bid, ask, bid_size, ask_size, updated_at) -> int:
         count = self.count(ticker=ticker, bid=bid, ask=ask,
                            bid_size=bid_size, ask_size=ask_size)
@@ -64,3 +70,21 @@ class BidAskQuery:
         db.session.add(data)
         db.session.commit()
         return 1
+
+    def update(self, id, ticker, bid, ask, bid_size, ask_size, updated_at) -> int:
+        rs: BidAsk = db.session.query(BidAsk) \
+            .filter(BidAsk.ticker == ticker).first()
+        rs.ask = ask
+        rs.ask_size = ask_size
+        rs.bid = bid
+        rs.bid_size = bid_size
+        rs.ticker = ticker
+        rs.updated_at = updated_at
+        db.session.commit()
+        return 1
+
+    def delete(self, id: str):
+        rs = db.session.query(BidAsk) \
+            .filter(BidAsk.id == id).first()
+        db.session.delete(rs)
+        db.session.commit()

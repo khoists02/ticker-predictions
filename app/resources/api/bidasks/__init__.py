@@ -14,7 +14,37 @@ class BidAskController(Resource):
         ),
     }
 
+    del_args = {
+        'id': fields.Str(
+            required=True
+        ),
+    }
+
     body = {
+        'ticker': fields.String(
+            required=True,
+        ),
+        'updatedAt': fields.String(
+            required=True,
+        ),
+        'ask': fields.Float(
+            required=True
+        ),
+        'bid': fields.Float(
+            required=True
+        ),
+        'askSize': fields.Float(
+            required=True
+        ),
+        'bidSize': fields.Float(
+            required=True
+        ),
+    }
+
+    update_body = {
+        'id': fields.String(
+            required=True,
+        ),
         'ticker': fields.String(
             required=True,
         ),
@@ -43,6 +73,13 @@ class BidAskController(Resource):
             'content': [i.serialize for i in list]
         }, 200
 
+    @use_args(update_body)
+    def put(self, body):
+        qr = BidAskQuery()
+        count: int = qr.update(id=body['id'], ticker=body['ticker'], ask=body['ask'], bid=body['bid'],
+                               ask_size=body['askSize'], bid_size=body['bidSize'], updated_at=body['updatedAt'])
+        return {'message': 'Update Success'}, 201
+
     @use_args(body)
     def post(self, body):
         qr = BidAskQuery()
@@ -51,3 +88,28 @@ class BidAskController(Resource):
         if count == 0:
             return {'message': 'Exits'}, 400
         return {'message': 'Create Success'}, 201
+
+    @use_kwargs(del_args, location='query')
+    def delete(self, id):
+        qr = BidAskQuery()
+        qr.delete(id=id)
+        return {
+            'message': 'OK'
+        }, 201
+
+
+class BidAsksDetails(Resource):
+    def __init__(self) -> None:
+        pass
+
+    # args = {
+    #     'id': fields.Str(
+    #         required=True
+    #     ),
+    # }
+
+    # @use_kwargs(args, location='query')
+    def get(self, id: str):
+        qr = BidAskQuery()
+        rs = qr.findById(id)
+        return rs
