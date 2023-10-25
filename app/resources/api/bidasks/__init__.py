@@ -65,19 +65,25 @@ class BidAskController(Resource):
         ),
     }
 
+    def get_updated(item):
+        return item.get('updated_at')
+
     @use_kwargs(args, location='query')
     def get(self, ticker):
         qr = BidAskQuery()
         list = qr.findListByTicker(ticker=ticker)
+        rs = [i.serialize for i in list]
+        # print(rs)
+        # print()
         return {
-            'content': [i.serialize for i in list]
+            'content': sorted(rs, key=lambda x: x['updatedAt']),
         }, 200
 
     @use_args(update_body)
     def put(self, body):
         qr = BidAskQuery()
-        count: int = qr.update(id=body['id'], ticker=body['ticker'], ask=body['ask'], bid=body['bid'],
-                               ask_size=body['askSize'], bid_size=body['bidSize'], updated_at=body['updatedAt'])
+        qr.update(id=body['id'], ticker=body['ticker'], ask=body['ask'], bid=body['bid'],
+                  ask_size=body['askSize'], bid_size=body['bidSize'], updated_at=body['updatedAt'])
         return {'message': 'Update Success'}, 201
 
     @use_args(body)

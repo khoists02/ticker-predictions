@@ -81,7 +81,6 @@ class BidAskQuery:
         rs.ticker = ticker
         rs.updated_at = updated_at
         db.session.commit()
-        return 1
 
     def delete(self, id: str):
         rs = db.session.query(BidAsk) \
