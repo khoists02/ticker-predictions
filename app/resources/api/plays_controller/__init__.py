@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from webargs import fields
-from webargs.flaskparser import use_args
+from webargs.flaskparser import use_args, use_kwargs
 from resources.models.plays import PlaysQuery
 
 
@@ -86,3 +86,20 @@ class PlaysController(Resource):
                           in_price=body['in_price'], virtual=body['virtual'], played_at=body['played_at'], done=body['done'], total=body['total'])
 
         return {'message': 'OK'}, 201
+
+
+class PlayTickersController(Resource):
+    def __init__(self) -> None:
+        self.query = PlaysQuery()
+
+    args = {
+        'ticker': fields.Str(
+            required=True
+        ),
+    }
+
+    @use_kwargs(args, location='query')
+    def get(self, ticker):
+        return {
+            'content': self.query.find_all_by_ticker(ticker=ticker)
+        }, 200

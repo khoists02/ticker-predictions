@@ -24,9 +24,9 @@ class Plays(db.Model):
             'id': str(self.id),
             'ticker': self.ticker,
             'price': self.price,
-            'in_price': self.in_price,
+            'inPrice': self.in_price,
             'virtual': self.virtual,
-            'played_at': self.played_at,
+            'playedAt': self.played_at,
             'total': self.total,
             'done': self.done
         }
@@ -38,6 +38,11 @@ class PlaysQuery:
 
     def find_all(self):
         rs = db.session.query(Plays)
+        return [i.serialize for i in rs]
+
+    def find_all_by_ticker(self, ticker):
+        rs = db.session.query(Plays) \
+            .filter(Plays.ticker == ticker)
         return [i.serialize for i in rs]
 
     def find_by_id(self, id: str):
