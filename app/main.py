@@ -7,6 +7,7 @@ from resources.api.prediction_history import TickerEarningDates
 from resources.api.favorite_controller import FavoriteController
 from resources.api.notification_controller import NotificationController, NotificationDetails, NotificationCount
 from resources.api.report import ReportController, ReportByDateController
+from resources.api.plays_controller import PlayDetailsController, PlaysController
 from resources.api.tickers import TickerFastInfoController
 from webargs.flaskparser import parser
 from resources.database import db
@@ -71,6 +72,10 @@ api.add_resource(BidAskController, '/api/v1/bidasks')
 api.add_resource(BidAsksDetails,
                  '/api/v1/bidasks/<uuid:id>')
 api.add_resource(TickerEarningDates, '/api/v1/earningdates')
+
+api.add_resource(PlayDetailsController,
+                 '/api/v1/plays/<uuid:id>')
+api.add_resource(PlaysController, '/api/v1/plays')
 
 # Notification
 api.add_resource(NotificationController, '/api/v1/notifications')
