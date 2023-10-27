@@ -2,6 +2,7 @@ from flask_restful import Resource
 from webargs import fields
 from webargs.flaskparser import use_args, use_kwargs
 from resources.models.plays import PlaysQuery
+import requests
 
 
 class PlayDetailsController(Resource):
@@ -9,16 +10,19 @@ class PlayDetailsController(Resource):
         self.query = PlaysQuery()
 
     body = {
+        'id': fields.String(
+            required=True,
+        ),
         'ticker': fields.String(
             required=True,
         ),
-        'played_at': fields.String(
+        'playedAt': fields.String(
             required=True,
         ),
         'price': fields.Float(
             required=True,
         ),
-        'in_price': fields.Float(
+        'inPrice': fields.Float(
             required=True,
         ),
         'total': fields.Float(
@@ -40,9 +44,9 @@ class PlayDetailsController(Resource):
         return {'message': 'deleted'}, 200
 
     @use_args(body)
-    def put(self, id, body):
+    def put(self, body, id):
         self.query.update(id=id, ticker=body['ticker'], price=body['price'],
-                          in_price=body['in_price'], virtual=body['virtual'], played_at=body['played_at'], done=body['done'], total=body['total'])
+                          in_price=body['inPrice'], virtual=body['virtual'], played_at=body['playedAt'], done=body['done'], total=body['total'])
         return {'message': 'updated'}, 201
 
 
@@ -54,13 +58,13 @@ class PlaysController(Resource):
         'ticker': fields.String(
             required=True,
         ),
-        'played_at': fields.String(
+        'playedAt': fields.String(
             required=True,
         ),
         'price': fields.Float(
             required=True,
         ),
-        'in_price': fields.Float(
+        'inPrice': fields.Float(
             required=True,
         ),
         'total': fields.Float(
@@ -73,9 +77,15 @@ class PlaysController(Resource):
             required=True,
         ),
     }
+    args = {
+        'ticker': fields.Str(
+            required=True
+        ),
+    }
 
-    def get(self):
-        rs = self.query.find_all()
+    @use_kwargs(args, location='query')
+    def get(self, ticker):
+        rs = self.query.find_all_by_ticker(ticker=ticker)
         return {
             'content': rs
         }, 200
@@ -83,7 +93,7 @@ class PlaysController(Resource):
     @use_args(body)
     def post(self, body):
         self.query.create(ticker=body['ticker'], price=body['price'],
-                          in_price=body['in_price'], virtual=body['virtual'], played_at=body['played_at'], done=body['done'], total=body['total'])
+                          in_price=body['inPrice'], virtual=body['virtual'], played_at=body['playedAt'], done=body['done'], total=body['total'])
 
         return {'message': 'OK'}, 201
 

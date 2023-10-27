@@ -1,4 +1,5 @@
-from sqlalchemy import Column, UUID, String, Float, Boolean, text
+from sqlalchemy import Column, UUID, String, Float, Boolean, text, and_
+from sqlalchemy.sql.expression import false
 from resources.database import db
 
 
@@ -42,13 +43,18 @@ class PlaysQuery:
 
     def find_all_by_ticker(self, ticker):
         rs = db.session.query(Plays) \
-            .filter(Plays.ticker == ticker)
+            .filter(and_(Plays.ticker == ticker, Plays.done.is_(False))).all()
         return [i.serialize for i in rs]
 
     def find_by_id(self, id: str):
         rs = db.session.query(Plays) \
             .filter(Plays.id == id).first()
         return rs.serialize
+
+    def find_one(self, id):
+        rs = db.session.query(Plays) \
+            .filter(Plays.id == id).first()
+        return rs
 
     def create(self, ticker, price, in_price, virtual, played_at, total, done) -> None:
         data = Plays(ticker=ticker, price=price, in_price=in_price, virtual=virtual,
@@ -57,7 +63,8 @@ class PlaysQuery:
         db.session.commit()
 
     def update(self, id, ticker, price, in_price, virtual, played_at, total, done):
-        play: Plays = self.find_by_id(id)
+        play: Plays = self.find_one(id)
+        print(play)
         play.ticker = ticker
         play.price = price
         play.in_price = in_price
@@ -68,6 +75,6 @@ class PlaysQuery:
         db.session.commit()
 
     def delete(self, id):
-        play = self.find_by_id(id)
+        play = self.find_one(id)
         db.session.delete(play)
         db.session.commit()
