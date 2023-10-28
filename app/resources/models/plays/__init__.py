@@ -14,6 +14,8 @@ class Plays(db.Model):
     played_at = Column(String, nullable=True)
     total = Column(Float, nullable=False)
     done = Column(Boolean, nullable=False)
+    done_at = Column(String, nullable=True)
+    current_price = Column(Float, nullable=False)
 
     def __repr__(self):
         return '<Plays %r>' % self.serialize
@@ -29,7 +31,9 @@ class Plays(db.Model):
             'virtual': self.virtual,
             'playedAt': self.played_at,
             'total': self.total,
-            'done': self.done
+            'done': self.done,
+            'doneAt': self.done_at,
+            'currentPrice': self.current_price,
         }
 
 
@@ -41,9 +45,9 @@ class PlaysQuery:
         rs = db.session.query(Plays)
         return [i.serialize for i in rs]
 
-    def find_all_by_ticker(self, ticker):
+    def find_all_by_ticker(self, ticker, done):
         rs = db.session.query(Plays) \
-            .filter(and_(Plays.ticker == ticker, Plays.done.is_(False))).all()
+            .filter(and_(Plays.ticker == ticker, Plays.done.is_(done))).all()
         return [i.serialize for i in rs]
 
     def find_by_id(self, id: str):
@@ -62,7 +66,7 @@ class PlaysQuery:
         db.session.add(data)
         db.session.commit()
 
-    def update(self, id, ticker, price, in_price, virtual, played_at, total, done):
+    def update(self, id, ticker, price, in_price, virtual, played_at, total, done, done_at, current_price):
         play: Plays = self.find_one(id)
         print(play)
         play.ticker = ticker
@@ -72,6 +76,9 @@ class PlaysQuery:
         play.played_at = played_at
         play.total = total
         play.done = done
+        if done is True:
+            play.done_at = done_at
+            play.current_price = current_price
         db.session.commit()
 
     def delete(self, id):

@@ -34,6 +34,12 @@ class PlayDetailsController(Resource):
         'done': fields.Boolean(
             required=True,
         ),
+        'doneAt': fields.String(
+            required=False,
+        ),
+        'currentPrice': fields.Float(
+            required=True,
+        )
     }
 
     def get(self, id):
@@ -46,7 +52,7 @@ class PlayDetailsController(Resource):
     @use_args(body)
     def put(self, body, id):
         self.query.update(id=id, ticker=body['ticker'], price=body['price'],
-                          in_price=body['inPrice'], virtual=body['virtual'], played_at=body['playedAt'], done=body['done'], total=body['total'])
+                          in_price=body['inPrice'], virtual=body['virtual'], played_at=body['playedAt'], done=body['done'], total=body['total'], done_at=body['doneAt'], current_price=body['currentPrice'])
         return {'message': 'updated'}, 201
 
 
@@ -81,11 +87,14 @@ class PlaysController(Resource):
         'ticker': fields.Str(
             required=True
         ),
+        'done': fields.Bool(
+            required=False,
+        ),
     }
 
     @use_kwargs(args, location='query')
-    def get(self, ticker):
-        rs = self.query.find_all_by_ticker(ticker=ticker)
+    def get(self, ticker, done):
+        rs = self.query.find_all_by_ticker(ticker=ticker, done=done)
         return {
             'content': rs
         }, 200
