@@ -20,4 +20,4 @@ mailtrap==2.0.1
 # uwsgi==2.0.22
 # pyuwsgi==2.0.22
 apscheduler==3.10.4
-# flask-socketio==5.3.6
+flask-socketio==5.3.6

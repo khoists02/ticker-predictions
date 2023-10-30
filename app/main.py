@@ -19,6 +19,7 @@ import atexit
 from resources.jobs import Job
 import datetime
 import pytz
+from flask_socketio import SocketIO, emit, send
 # set configuration values
 
 VN_TZ = pytz.timezone("Asia/Ho_Chi_Minh")
@@ -89,6 +90,8 @@ api.add_resource(ReportByDateController, '/api/v1/reportfilter')
 
 # Tickers Info
 api.add_resource(TickerFastInfoController, '/api/v1/short')
+
+socketio = SocketIO(app)
 
 
 @parser.error_handler
@@ -220,5 +223,7 @@ with app.app_context():
     # new_job.count_sessions_today()
 
     # logging.log(msg='Start scheduler configuration', level=logging.INFO)
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    socketio.run(host='0.0.0.0', debug=True)
+    # handle_message("test")
