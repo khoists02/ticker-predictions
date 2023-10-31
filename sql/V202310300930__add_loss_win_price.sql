@@ -1,0 +1,3 @@
+ALTER TABLE plays ADD loss_price float NOT NULL DEFAULT 0;
+ALTER TABLE plays ADD win_price float NOT NULL DEFAULT 0;
+ALTER TABLE plays ADD cfd int NOT NULL DEFAULT 0;

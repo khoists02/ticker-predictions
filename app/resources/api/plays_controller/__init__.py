@@ -25,6 +25,12 @@ class PlayDetailsController(Resource):
         'inPrice': fields.Float(
             required=True,
         ),
+        'lossPrice': fields.Float(
+            required=True,
+        ),
+        'winPrice': fields.Float(
+            required=True,
+        ),
         'total': fields.Float(
             required=True,
         ),
@@ -39,6 +45,9 @@ class PlayDetailsController(Resource):
         ),
         'currentPrice': fields.Float(
             required=True,
+        ),
+        'cfd': fields.Integer(
+            required=True,
         )
     }
 
@@ -52,7 +61,7 @@ class PlayDetailsController(Resource):
     @use_args(body)
     def put(self, body, id):
         self.query.update(id=id, ticker=body['ticker'], price=body['price'],
-                          in_price=body['inPrice'], virtual=body['virtual'], played_at=body['playedAt'], done=body['done'], total=body['total'], done_at=body['doneAt'], current_price=body['currentPrice'])
+                          in_price=body['inPrice'], virtual=body['virtual'], played_at=body['playedAt'], done=body['done'], total=body['total'], done_at=body['doneAt'], current_price=body['currentPrice'], lossPrice=body['lossPrice'], winPrice=body['winPrice'], cfd=body['cfd'])
         return {'message': 'updated'}, 201
 
 
@@ -73,6 +82,12 @@ class PlaysController(Resource):
         'inPrice': fields.Float(
             required=True,
         ),
+        'lossPrice': fields.Float(
+            required=True,
+        ),
+        'winPrice': fields.Float(
+            required=True,
+        ),
         'total': fields.Float(
             required=True,
         ),
@@ -80,6 +95,9 @@ class PlaysController(Resource):
             required=True,
         ),
         'done': fields.Boolean(
+            required=True,
+        ),
+        'cfd': fields.Integer(
             required=True,
         ),
     }
@@ -102,7 +120,7 @@ class PlaysController(Resource):
     @use_args(body)
     def post(self, body):
         self.query.create(ticker=body['ticker'], price=body['price'],
-                          in_price=body['inPrice'], virtual=body['virtual'], played_at=body['playedAt'], done=body['done'], total=body['total'])
+                          in_price=body['inPrice'], virtual=body['virtual'], played_at=body['playedAt'], done=body['done'], total=body['total'], lossPrice=body['lossPrice'], winPrice=body['winPrice'], cfd=body['cfd'])
 
         return {'message': 'OK'}, 201
 
