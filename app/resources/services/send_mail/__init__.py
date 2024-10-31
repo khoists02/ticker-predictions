@@ -1,3 +1,4 @@
+# Prediction System power by Khoi.le
 from resources.services.mail import mail
 from flask_mail import Message
 from flask import render_template
