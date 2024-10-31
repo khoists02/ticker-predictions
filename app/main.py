@@ -106,16 +106,16 @@ with app.app_context():
     print("======= Database start... ======")
     # Database Config
     db.init_app(app)
-    print("======= Job Context ======")
+    # print("======= Job Context ======")
 
     # scheduler = BackgroundScheduler()
     #
     # scheduler.configure(timezone=VN_TZ)
 
-    print("==== Add job store ====")
+    # print("==== Add job store ====")
     # scheduler.add_jobstore('sqlalchemy', engine=db.engine)
 
-    print("==== Add main jobs ====")
+    # print("==== Add main jobs ====")
 
     # defined jobs
     # def job_delete_session():
@@ -220,4 +220,4 @@ with app.app_context():
 
     # logging.log(msg='Start scheduler configuration', level=logging.INFO)
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=False)
