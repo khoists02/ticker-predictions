@@ -1,25 +1,25 @@
 from flask import Flask, current_app
 from flask_restful import Api, abort
-from resources.api.predicts import StockData, StockInfo, StockCashFlowSheet, StockDataDaily, StockBalanceSheet, StockRecommendations
-from resources.api.bidasks import BidAskController, BidAsksDetails
-from resources.api.tickers_account import TickersAccount, TickerSettings
-from resources.api.prediction_history import TickerEarningDates
-from resources.api.favorite_controller import FavoriteController
-from resources.api.notification_controller import NotificationController, NotificationDetails, NotificationCount
-from resources.api.report import ReportController, ReportByDateController
-from resources.api.plays_controller import PlayDetailsController, PlaysController
-from resources.api.tickers import TickerFastInfoController
+from resources.api.predicts import StockData, StockDataDaily
+# from resources.api.bidasks import BidAskController, BidAsksDetails
+# from resources.api.tickers_account import TickersAccount, TickerSettings
+# from resources.api.prediction_history import TickerEarningDates
+# from resources.api.favorite_controller import FavoriteController
+# from resources.api.notification_controller import NotificationController, NotificationDetails, NotificationCount
+# from resources.api.report import ReportController, ReportByDateController
+# from resources.api.plays_controller import PlayDetailsController, PlaysController
+# from resources.api.tickers import TickerFastInfoController
 from webargs.flaskparser import parser
 from resources.database import db
 from resources.config import AppConfig
 from flask_cors import CORS
 from flask_mail import Mail
-from apscheduler.schedulers.background import BackgroundScheduler
-import atexit
-from resources.jobs import Job
+# from apscheduler.schedulers.background import BackgroundScheduler
+# import atexit
+# from resources.jobs import Job
 import datetime
 import pytz
-from flask_socketio import SocketIO, emit, send
+# from flask_socketio import SocketIO, emit, send
 # set configuration values
 
 VN_TZ = pytz.timezone("Asia/Ho_Chi_Minh")
@@ -27,7 +27,6 @@ VN_TZ = pytz.timezone("Asia/Ho_Chi_Minh")
 
 class Config:
     SCHEDULER_API_ENABLED = True
-
 
 appConfig = AppConfig()
 app = Flask(__name__, template_folder='templates')
@@ -53,45 +52,44 @@ app.config['MAIL_USE_SSL'] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = appConfig.SQLALCHEMY_DATABASE_URI
 app.config["SCHEDULER_API_ENABLED"] = True
 mail = mail_app
-api = Api(mail_app)
+api = Api(app)
 
 # Database Config
 # db.init_app(app)
 
-# routes APIs
+# Routes APIs
 api.add_resource(StockData, '/api/v1/data')
 api.add_resource(StockDataDaily, '/api/v1/daily')
-api.add_resource(StockCashFlowSheet, '/api/v1/cashflow')
-api.add_resource(StockBalanceSheet, '/api/v1/balanceSheet')
-api.add_resource(StockRecommendations, '/api/v1/recommendations')
-api.add_resource(TickersAccount, '/api/v1/account')
-api.add_resource(StockInfo, '/api/v1/info')
-api.add_resource(TickerSettings, '/api/v1/settings')
-api.add_resource(FavoriteController, '/api/v1/favorites')
-api.add_resource(BidAskController, '/api/v1/bidasks')
-api.add_resource(BidAsksDetails,
-                 '/api/v1/bidasks/<uuid:id>')
-api.add_resource(TickerEarningDates, '/api/v1/earningdates')
+# api.add_resource(StockCashFlowSheet, '/api/v1/cashflow')
+# api.add_resource(StockBalanceSheet, '/api/v1/balanceSheet')
+# api.add_resource(StockRecommendations, '/api/v1/recommendations')
+# api.add_resource(TickersAccount, '/api/v1/account')
+# api.add_resource(StockInfo, '/api/v1/info')
+# api.add_resource(TickerSettings, '/api/v1/settings')
+# api.add_resource(FavoriteController, '/api/v1/favorites')
+# api.add_resource(BidAskController, '/api/v1/bidasks')
+# api.add_resource(BidAsksDetails,
+#                  '/api/v1/bidasks/<uuid:id>')
+# api.add_resource(TickerEarningDates, '/api/v1/earningdates')
+#
+# api.add_resource(PlayDetailsController,
+#                  '/api/v1/plays/<uuid:id>')
+# api.add_resource(PlaysController, '/api/v1/plays')
+#
+# # Notification
+# api.add_resource(NotificationController, '/api/v1/notifications')
+# api.add_resource(NotificationCount, '/api/v1/notifications/count')
+# api.add_resource(NotificationDetails,
+#                  '/api/v1/notifications/<uuid:id>/read')
+# # Report
+# api.add_resource(ReportController, '/api/v1/report')
+# api.add_resource(ReportByDateController, '/api/v1/reportfilter')
+# # api.add_resource(StockData, '/api/v1/balancesheet')
+#
+# # Tickers Info
+# api.add_resource(TickerFastInfoController, '/api/v1/short')
 
-api.add_resource(PlayDetailsController,
-                 '/api/v1/plays/<uuid:id>')
-api.add_resource(PlaysController, '/api/v1/plays')
-
-# Notification
-api.add_resource(NotificationController, '/api/v1/notifications')
-api.add_resource(NotificationCount, '/api/v1/notifications/count')
-api.add_resource(NotificationDetails,
-                 '/api/v1/notifications/<uuid:id>/read')
-# Report
-api.add_resource(ReportController, '/api/v1/report')
-api.add_resource(ReportByDateController, '/api/v1/reportfilter')
-# api.add_resource(StockData, '/api/v1/balancesheet')
-
-# Tickers Info
-api.add_resource(TickerFastInfoController, '/api/v1/short')
-
-socketio = SocketIO(app)
-
+# socketio = SocketIO(app)
 
 @parser.error_handler
 def handle_request_parsing_error(err, req, schema, *, error_status_code, error_headers):
@@ -110,9 +108,9 @@ with app.app_context():
     db.init_app(app)
     print("======= Job Context ======")
 
-    scheduler = BackgroundScheduler()
-
-    scheduler.configure(timezone=VN_TZ)
+    # scheduler = BackgroundScheduler()
+    #
+    # scheduler.configure(timezone=VN_TZ)
 
     print("==== Add job store ====")
     # scheduler.add_jobstore('sqlalchemy', engine=db.engine)
@@ -129,77 +127,77 @@ with app.app_context():
 
     #     print("========  End delete session Job ========")
 
-    def job_pm():
-        print("========  Start import data Job at PM ========")
-        print_date()
-        with app.app_context():
-            new_job = Job(ticker="BLND")
-            new_job.import_session_data()
-
-        print("========  End import data Job at PM ========")
-
-    def job_am():
-
-        print("========  Start import data Job at AM ========")
-        print_date()
-        with app.app_context():
-            new_job = Job(ticker="BLND")
-            new_job.import_session_data()
-
-        print("========  End import data Job at AM ========")
-
-    def job_report():
-        print("========  Start report Job ========")
-        print_date()
-        with app.app_context():
-            new_job = Job(ticker="BLND")
-            new_job.count_sessions()
-
-        print("========  End report Job ========")
-
-    def job_report_today():
-        print("========  Start report today Job ========")
-        print_date()
-        with app.app_context():
-            new_job = Job(ticker="BLND")
-            new_job.count_sessions_today()
-
-        print("========  End report today Job ========")
-
-    def job_tracking():
-        print("==== Tracking ====")
-        print_date()
+    # def job_pm():
+    #     print("========  Start import data Job at PM ========")
+    #     print_date()
+    #     with app.app_context():
+    #         new_job = Job(ticker="BLND")
+    #         new_job.import_session_data()
+    #
+    #     print("========  End import data Job at PM ========")
+    #
+    # def job_am():
+    #
+    #     print("========  Start import data Job at AM ========")
+    #     print_date()
+    #     with app.app_context():
+    #         new_job = Job(ticker="BLND")
+    #         new_job.import_session_data()
+    #
+    #     print("========  End import data Job at AM ========")
+    #
+    # def job_report():
+    #     print("========  Start report Job ========")
+    #     print_date()
+    #     with app.app_context():
+    #         new_job = Job(ticker="BLND")
+    #         new_job.count_sessions()
+    #
+    #     print("========  End report Job ========")
+    #
+    # def job_report_today():
+    #     print("========  Start report today Job ========")
+    #     print_date()
+    #     with app.app_context():
+    #         new_job = Job(ticker="BLND")
+    #         new_job.count_sessions_today()
+    #
+    #     print("========  End report today Job ========")
+    #
+    # def job_tracking():
+    #     print("==== Tracking ====")
+    #     print_date()
 
     # Import data 20-23 *5
     # Schedule the cron job to run every 5mn from 0AM - 23PM every working day
-    scheduler.add_job(
-        func=job_pm,
-        trigger='cron', day_of_week='mon-fri', hour='20-23', minute='*/5'  # 20PM-23PM
-    )
+    # scheduler.add_job(
+    #     func=job_pm,
+    #     trigger='cron', day_of_week='mon-fri', hour='20-23', minute='*/5'  # 20PM-23PM
+    # )
 
     # 05-5 *5
     # Schedule the cron job to run on Saturday from 00 AM - 5AM every 5mn
-    scheduler.add_job(
-        func=job_am,
-        trigger='cron', day_of_week='mon-sat', hour='0-5', minute='*/5'  # 0AM - 5AM
-    )
+    # scheduler.add_job(
+    #     func=job_am,
+    #     trigger='cron', day_of_week='mon-sat', hour='0-5', minute='*/5'  # 0AM - 5AM
+    # )
 
     # TODO: Report today 7AM
-    scheduler.add_job(
-        func=job_report,
-        trigger='cron', day_of_week='mon-sat', hour=7
-    )
+    # scheduler.add_job(
+    #     func=job_report,
+    #     trigger='cron', day_of_week='mon-sat', hour=7
+    # )
 
     # TODO: Report Today at 8AM
-    scheduler.add_job(
-        func=job_report_today,
-        trigger='cron', day_of_week='mon-sat', hour=8
-    )
+    # scheduler.add_job(
+    #     func=job_report_today,
+    #     trigger='cron', day_of_week='mon-sat', hour=8
+    # )
 
-    scheduler.add_job(
-        func=job_tracking,
-        trigger='cron', hour='*'
-    )
+    # scheduler.add_job(
+    #     func=job_tracking,
+    #     trigger='cron', hour='*'
+    # )
 
     # TODO: 7AM
     # scheduler.add_job(
@@ -207,14 +205,14 @@ with app.app_context():
     #     trigger='cron', day_of_week='mon-sat', hour=7  # Run 6AM every mon-sat
     # )
 
-    print("==== Start scheduler ====")
+    # print("==== Start scheduler ====")
     # Start the scheduler
-    scheduler.start()
+    # scheduler.start()
 
-    print("Scheduled time zone {}".format(scheduler.timezone))
+    # print("Scheduled time zone {}".format(scheduler.timezone))
 
     # Shut down the scheduler when exiting the app
-    atexit.register(lambda: scheduler.shutdown())
+    # atexit.register(lambda: scheduler.shutdown())
 
     # TODO: Run manually
     # new_job = Job(ticker="BLND")
