@@ -1,3 +1,4 @@
+# Prediction System power by Khoi.le
 from os import environ, path, curdir
 
 ROOT_DIR = path.abspath(curdir)

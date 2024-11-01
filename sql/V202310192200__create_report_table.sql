@@ -1,3 +1,4 @@
+-- Prediction System power by Khoi.le
 CREATE TABLE report (
     id UUID NOT NULL DEFAULT uuid_generate_v4(),
     ticker varchar NOT NULL,

@@ -1,3 +1,4 @@
+# Prediction System power by Khoi.le
 from flask import Flask, current_app
 from flask_restful import Api, abort
 from resources.api.predicts import StockData, StockDataDaily
