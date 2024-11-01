@@ -1,3 +1,6 @@
+"""
+Prediction System power by Khoi.le
+"""
 import numpy as np
 from yahoo_fin import stock_info as si
 import pandas as pd

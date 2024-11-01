@@ -1,4 +1,6 @@
-# Prediction System power by Khoi.le
+"""
+Prediction System power by Khoi.le
+"""
 from flask_socketio import namespace, emit
 
 

@@ -1,4 +1,6 @@
-# Prediction System power by Khoi.le
+"""
+Prediction System power by Khoi.le
+"""
 from flask_restful import Resource
 import json
 from resources.helpers import StockDataService

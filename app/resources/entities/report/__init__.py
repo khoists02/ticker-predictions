@@ -1,3 +1,6 @@
+"""
+Prediction System power by Khoi.le
+"""
 from sqlalchemy import Column, UUID, String, Float, text
 from resources.database import db
 
