@@ -3,7 +3,7 @@ Prediction System power by Khoi.le
 """
 from flask import Flask, current_app
 from flask_restful import Api, abort
-from resources.api.predicts import StockData, StockDataDaily
+from resources.api.stocks import StockData, StockDataDaily
 from webargs.flaskparser import parser
 from resources.database import db
 from resources.config import AppConfig
