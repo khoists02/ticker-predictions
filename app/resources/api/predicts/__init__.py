@@ -1,7 +1,6 @@
 from flask_restful import Resource
-from flask import abort
 import json
-from resources.helpers import Helpers
+from resources.helpers import StockDataService
 from webargs import fields
 from webargs.flaskparser import use_kwargs
 # from yfinance import AssertionError
@@ -164,7 +163,7 @@ from webargs.flaskparser import use_kwargs
 
 class StockData(Resource):
     def __init__(self) -> None:
-        self.helper = Helpers()
+        self.stock_service = StockDataService()
 
     args = {
         'ticker': fields.Str(
@@ -183,16 +182,16 @@ class StockData(Resource):
     @use_kwargs(args, location='query')
     def get(self, ticker: str, start, end):
         try:
-            data = self.helper.load_df_ticker(
+            data = self.stock_service.load_df_ticker(
                 ticker=ticker, start=start, end=end)
             return json.loads(data), 200
         except Exception as e:
-            return [], 200
+            return e, 500
 
 
 class StockInfo(Resource):
     def __init__(self) -> None:
-        self.helper = Helpers()
+        self.stock_service = StockDataService()
 
     args = {
         'ticker': fields.Str(
@@ -202,12 +201,12 @@ class StockInfo(Resource):
 
     @use_kwargs(args, location='query')
     def get(self, ticker: str):
-        return self.helper.get_ticker_daily(ticker=ticker), 200
+        return self.stock_service.get_ticker_daily(ticker=ticker), 200
 
 
 class StockBalanceSheet(Resource):
     def __init__(self) -> None:
-        self.helper = Helpers()
+        self.stock_service = StockDataService()
 
     args = {
         'ticker': fields.Str(
@@ -220,12 +219,12 @@ class StockBalanceSheet(Resource):
 
     @use_kwargs(args, location='query')
     def get(self, ticker: str, freq: str):
-        return json.loads(self.helper.get_balance_sheet(ticker=ticker, freq=freq)), 200
+        return json.loads(self.stock_service.get_balance_sheet(ticker=ticker, freq=freq)), 200
 
 
 class StockCashFlowSheet(Resource):
     def __init__(self) -> None:
-        self.helper = Helpers()
+        self.stock_service = StockDataService()
 
     args = {
         'ticker': fields.Str(
@@ -238,12 +237,12 @@ class StockCashFlowSheet(Resource):
 
     @use_kwargs(args, location='query')
     def get(self, ticker: str, freq: str):
-        return json.loads(self.helper.get_cash_flow(ticker=ticker, freq=freq))
+        return json.loads(self.stock_service.get_cash_flow(ticker=ticker, freq=freq))
 
 
 class StockRecommendations(Resource):
     def __init__(self) -> None:
-        self.helper = Helpers()
+        self.stock_service = StockDataService()
 
     args = {
         'ticker': fields.Str(
@@ -253,12 +252,12 @@ class StockRecommendations(Resource):
 
     @use_kwargs(args, location='query')
     def get(self, ticker: str):
-        return self.helper.get_recommendations(ticker=ticker)
+        return self.stock_service.get_recommendations(ticker=ticker)
 
 
 class StockDataDaily(Resource):
     def __init__(self) -> None:
-        self.helper = Helpers()
+        self.stock_service = StockDataService()
 
     args = {
         'ticker': fields.Str(
@@ -281,9 +280,8 @@ class StockDataDaily(Resource):
     @use_kwargs(args, location='query')
     def get(self, ticker: str, start, end, interval):
         try:
-            data = self.helper.load_stock_by_day(
+            data = self.stock_service.load_stock_by_day(
                 ticker=ticker, start=start, end=end, interval=interval)
             return json.loads(data), 200
         except Exception as e:
-            print(e)
-            return [], 200
+            return e, 500
