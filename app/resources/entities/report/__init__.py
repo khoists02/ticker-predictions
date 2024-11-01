@@ -1,7 +1,9 @@
 from sqlalchemy import Column, UUID, String, Float, text
 from resources.database import db
 
-
+'''
+Report Table. Entity
+'''
 class Report(db.Model):
     __tablename__ = "report"
     id = Column(UUID, primary_key=True,
@@ -26,19 +28,22 @@ class Report(db.Model):
         }
 
 
-class ReportQuery:
+class ReportRepository:
     def __init__(self) -> None:
         pass
 
+    @staticmethod
     def find_all(self):
         rs = db.session.query(Report)
         return [i.serialize for i in rs]
 
-    def find_all_by_date(self, date: str):
+    @staticmethod
+    def find_all_by_date(date: str):
         rs = db.session.query(Report) \
             .filter(Report.date == date)
         return [i.serialize for i in rs]
 
+    @staticmethod
     def create(self, ticker, increase, decrease, date) -> None:
         data = Report(ticker=ticker, increase=increase, decrease=decrease,
                       date=date,)

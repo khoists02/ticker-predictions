@@ -6,8 +6,8 @@ from webargs.flaskparser import use_kwargs
 # from yfinance import AssertionError
 # from resources.services.predict import PredictService
 # from resources.services.filters import FilterService
-# from resources.models.filters import Filters
-# from resources.models.predictions_history import PredictionsHistory, PredictionsHistoryQuery
+# from resources.entities.filters import Filters
+# from resources.entities.predictions_history import PredictionsHistory, PredictionsHistoryQuery
 
 
 # class Predict(Resource):
